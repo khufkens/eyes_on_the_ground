@@ -6,7 +6,7 @@ Processing code to create a unique dataset of at least 35,000 timestamped georef
 
 This data will have valuable contributions in applications such as crop modeling, agricultural finance and insurance, agricultural advisories, and early warning systems. 
 
-## Introduction
+### Introduction
 
 This codebase serves two purposes, first provide a method to let data providers quickly screen for privacy issues of images collected in the field. Second, provide ancillary data with these images to support remote sensing applications.
 
@@ -22,7 +22,7 @@ The provided solution does not offer a retrained model specific to the circumsta
 
 The output, which lists both the accuracy (%) and the original labels allows for post-processing and manual screening to remove remaining mislabelled images (and either classify them as either a privacy issue or not).
 
-## Ancillary data and STAC processing
+### Ancillary data and STAC processing
 
 A second part of the processing requires amending seasonal image with ancillary remote sensing data. Remote sensing data will be stripped of geographic location data to provide anonymous but meaning full data for remote sensing analysis in conjunction with the original field based images. Data will be formatted as [STAC compliant](https://stacspec.org/).
 
@@ -30,7 +30,7 @@ A second part of the processing requires amending seasonal image with ancillary 
 
 This project is a collaboration between ACRE, IFPRI, CGIAR Big Data, and the Lacuna Fund.
 
-## References
+### References
 
 - Places: A 10 million Image Database for Scene Recognition
 B. Zhou, A. Lapedriza, A. Khosla, A. Oliva, and A. Torralba (2017).
