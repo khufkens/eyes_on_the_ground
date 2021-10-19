@@ -27,6 +27,8 @@ from keras.utils import layer_utils
 from keras.preprocessing import image
 from keras.applications.imagenet_utils import preprocess_input
 
+# where to fetch the weights
+# TODO include them in the main repo or elsewhere (backup)
 WEIGHTS_PATH = 'https://github.com/GKalliatakis/Keras-VGG16-places365/releases/download/v1.0/vgg16-places365_weights_tf_dim_ordering_tf_kernels.h5'
 WEIGHTS_PATH_NO_TOP = 'https://github.com/GKalliatakis/Keras-VGG16-places365/releases/download/v1.0/vgg16-places365_weights_tf_dim_ordering_tf_kernels_notop.h5'
 

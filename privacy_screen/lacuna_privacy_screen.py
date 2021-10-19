@@ -4,6 +4,7 @@
 
 # general file sorting tools
 import os, argparse, glob, sys
+import time
 
 # data wrangling tools
 import numpy as np
@@ -130,8 +131,6 @@ def label_image(file):
      #    print(top_preds[i]) # acceptable classes number
 
      # a vector of acceptable classes (fields, grass, etc)
-     # not comprehensive yet, screen all classes!!!
-     #
      # alternatively the last layer is removed and the
      # model retrained, but this would require valid
      # training data.
@@ -155,7 +154,8 @@ def label_image(file):
 
      # If the image is a field or similar evaluate
      # it for the presence of persons / faces
-     if top_preds[0] in acceptable_classes:
+     #if top_preds[0] in acceptable_classes:
+     if True:
       field = "yes"
       people = "NA"
         
@@ -166,12 +166,27 @@ def label_image(file):
       # disqualify the image for public release to
       # ensure no private data is leaked
       faces = face_detector.detect_faces(cv_image)
+
       if faces:
        prob = []
+
        for face in faces:
         val_list = list(face.values())
         prob.append(val_list[1])
-        people = max(list(prob))              
+        people = max(list(prob))
+
+        # set bounding box values
+        top_left = (val_list[0][0], val_list[0][1])
+
+        # top left + offsets
+        bottom_right = (val_list[0][0] + val_list[0][2], val_list[0][1] + val_list[0][3])
+
+        # apply "rectangle" mask to original image
+        # if the probability of a face instance is
+        # high, if not skip it (should avoid false)
+        # positives
+        if val_list[1] >= 0.9:
+         cv.rectangle(cv_image, top_left, bottom_right, 0, -1)
 
      else:
       field = "no"
@@ -184,7 +199,9 @@ def label_image(file):
       'people' : people,
       'class' : classes[top_preds[0]]
       }
-      
+
+     # TODO write file to disk
+
      return(results)
 
 
