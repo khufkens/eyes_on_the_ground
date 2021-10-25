@@ -35,7 +35,11 @@ def getArgs():
    parser.add_argument('-y',
                        '--year',
                        help = 'a year for which to download ARC data') 
-    
+
+   parser.add_argument('-p',
+                       '--product',
+                       help = 'which product to download, ARC or TAMSAT')
+
    parser.add_argument('-d',
                        '--directory',
                        help = 'location where to store the data')
