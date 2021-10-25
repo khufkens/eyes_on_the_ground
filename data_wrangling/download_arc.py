@@ -1,7 +1,15 @@
-# Import necessary libraries
+#!/usr/bin/env python3
 
-# general file sorting tools
+# ---------------------------------------------
+# Downloads gridded rainfall data
+# from the African Rainfall Climatology (v2)
+# product repository as well as from the
+# TAMSAT rainfall product at the U. Reading
+# ---------------------------------------------
+
+# Import necessary libraries
 import os, argparse, sys
+import zipfile
 from ftplib import FTP
 from datetime import datetime
 
@@ -73,6 +81,14 @@ if __name__ == '__main__':
      print("Downloading file: " + str(file.filename))
      file_out = args.directory + file.filename
      ftp.retrbinary("RETR " + file.filename ,open(file_out, 'wb').write)
+
+     try:
+      with zipfile.ZipFile(file_out) as z:
+        z.extractall(args.directory)
+        print("Extracted geotiff")
+        os.remove(file_out)
+     except:
+       print("Invalid file")
 
     # wrap up
     ftp.close()
