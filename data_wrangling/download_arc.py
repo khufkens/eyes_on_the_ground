@@ -10,6 +10,8 @@
 # Import necessary libraries
 import os, argparse, sys
 import zipfile
+import urllib3
+import shutil
 from ftplib import FTP
 from datetime import datetime
 
@@ -38,6 +40,7 @@ def getArgs():
 
    parser.add_argument('-p',
                        '--product',
+                       default= 'ARC',
                        help = 'which product to download, ARC or TAMSAT')
 
    parser.add_argument('-d',
@@ -48,6 +51,9 @@ def getArgs():
 
 # Main routine, calling subroutines above
 if __name__ == '__main__':
+
+    # TAMSAT base url daily product
+    base_url = "http://gws-access.jasmin.ac.uk/public/tamsat/rfe/data/v3.1/daily"
 
     # parse arguments
     args = getArgs()
@@ -61,41 +67,69 @@ if __name__ == '__main__':
     if not os.path.exists(args.directory):
       sys.exit("Directory does not exist, pick a different destination folder!")
     
-    # start timer
-    start = datetime.now()
+    if args.product == "ARC":
 
-    # login to the ftp server and change directory
-    # to the correct location
-    ftp = FTP("ftp.cpc.ncep.noaa.gov")
-    ftp.login(user='anonymous', passwd = 'anonymous')
-    ftp.cwd("/fews/fewsdata/africa/arc2/geotiff/")
+      # start timer
+      start = datetime.now()
 
-    # list all remote files, very convenient!
-    files = ftp.nlst()
+      # login to the ftp server and change directory
+      # to the correct location
+      ftp = FTP("ftp.cpc.ncep.noaa.gov")
+      ftp.login(user='anonymous', passwd = 'anonymous')
+      ftp.cwd("/fews/fewsdata/africa/arc2/geotiff/")
 
-    # convert to pandas data frame and filter out
-    # the desired year
-    files = pd.DataFrame(files, columns = ['filename'])
-    locs = files.filename.str.contains('^africa_arc\\.' + year)
-    files = files.loc[locs]
+      # list all remote files, very convenient!
+      files = ftp.nlst()
 
-    # loop over all dates and download the files
-    # in the data frame
-    for index, file in files.iterrows():
-     print("Downloading file: " + str(file.filename))
-     file_out = args.directory + file.filename
-     ftp.retrbinary("RETR " + file.filename ,open(file_out, 'wb').write)
+      # convert to pandas data frame and filter out
+      # the desired year
+      files = pd.DataFrame(files, columns = ['filename'])
+      locs = files.filename.str.contains('^africa_arc\\.' + year)
+      files = files.loc[locs]
 
-     try:
-      with zipfile.ZipFile(file_out) as z:
-        z.extractall(args.directory)
-        print("Extracted geotiff")
-        os.remove(file_out)
-     except:
-       print("Invalid file")
+      # loop over all dates and download the files
+      # in the data frame
+      for index, file in files.iterrows():
+       print("Downloading file: " + str(file.filename))
+       file_out = args.directory + file.filename
+       ftp.retrbinary("RETR " + file.filename ,open(file_out, 'wb').write)
 
-    # wrap up
-    ftp.close()
-    end = datetime.now()
-    diff = end - start
-    print('All files downloaded for ' + str(diff.seconds) + 's')
+       try:
+         with zipfile.ZipFile(file_out) as z:
+           z.extractall(args.directory)
+           print("Extracted geotiff")
+           os.remove(file_out)
+       except:
+         print("Invalid file")
+
+      # wrap up
+      ftp.close()
+      end = datetime.now()
+      diff = end - start
+      print('All files downloaded for ' + str(diff.seconds) + 's')
+
+    elif args.product == "TAMSAT":
+      
+      # list all dates
+      dates = pd.date_range(start='1/1/' + year, end='12/31/' + year)
+      df = pd.DataFrame(dates)
+      df = df.rename(columns = {0:'date'})
+
+      # date conversions
+      df['year'] = dates.strftime('%Y')
+      df['month'] = dates.strftime('%m')
+      df['date'] = dates.strftime('%Y_%m_%d')
+
+      for index, file in df.iterrows():
+
+        url = base_url + "/" + file.year + "/" + file.month + "/rfe" + file.date + ".v3.1.nc"
+        filename = args.directory + "/rfe" + file.date + ".v3.1.nc"
+
+        http = urllib3.PoolManager()
+        with open(filename, 'wb') as out:
+            r = http.request('GET', url, preload_content=False)
+            shutil.copyfileobj(r, out)
+        r.release_conn()
+
+    else:
+      sys.exit("Wrong product name, use either ARC or TAMSAT")

@@ -26,6 +26,20 @@ The output, which lists both the accuracy (%) and the original labels allows for
 
 A second part of the processing requires amending seasonal image with ancillary remote sensing data. Remote sensing data will be stripped of geographic location data to provide anonymous but meaning full data for remote sensing analysis in conjunction with the original field based images. Data will be formatted as [STAC compliant](https://stacspec.org/).
 
+
+## Data sources
+
+Polygons of villages were provided by the World Resource Insitute. Only labels are used and the original data needs to be downloaded from this location:
+
+https://datasets.wri.org/dataset/district-administrative-boundaries-of-kenya
+
+or sourced from the data directory of this project.
+
+
+
+
+
+
 ## Acknowledgements
 
 This project is a collaboration between ACRE, IFPRI, CGIAR Big Data, and the Lacuna Fund.
