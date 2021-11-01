@@ -22,10 +22,17 @@ The provided solution does not offer a retrained model specific to the circumsta
 
 The output, which lists both the accuracy (%) and the original labels allows for post-processing and manual screening to remove remaining mislabelled images (and either classify them as either a privacy issue or not).
 
-### Ancillary data and STAC processing
+### Ancillary data remote sensing data
 
 A second part of the processing requires amending seasonal image with ancillary remote sensing data. Remote sensing data will be stripped of geographic location data to provide anonymous but meaning full data for remote sensing analysis in conjunction with the original field based images. Data will be formatted as [STAC compliant](https://stacspec.org/).
 
+Downloads of ancillary data are done using python code which taps into the Google Earth Engine back end. You can install the required package using `pip3 install gee-subset`. Check other requirements in the requirements.txt file as well. The code will run for specific locations and date ranges to be set manually. Final output will strip the data from spatial identifiers and list the pixel data (if there are multiple returns from top-left to bottom-right row wise).
+
+### STAC processing
+
+The above data is then compiled into a STAC catalogue, with the following structure. The focus here is on the image data, keeping the remote sensing data separate. The remote sensing data can however easily be merged to provide a consistent (machine learning) dataset. Note that no interpolation is done on the data products to retain the original data as much as possible. The latter is up to the user as many different interpolation strategies exist.
+
+![](stac_diagram.svg)
 
 ## Data sources
 
@@ -34,11 +41,6 @@ Polygons of villages were provided by the World Resource Insitute. Only labels a
 https://datasets.wri.org/dataset/district-administrative-boundaries-of-kenya
 
 or sourced from the data directory of this project.
-
-
-
-
-
 
 ## Acknowledgements
 

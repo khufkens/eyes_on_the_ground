@@ -5,9 +5,6 @@ library(sf)
 
 source("R/extract_spatial_info.R")
 
-# read in districts
-district <- sf::st_read("data/kedistrictboundaries/ke_district_boundaries.shp")
-
 # read in site details
 site_details_sr <- readr::read_csv("/backup/see_it_grow/SR2020/Reports/SR2020_SiteDetails_3-5-2021.csv")
 site_details_lr <- readr::read_csv("/backup/see_it_grow/LR2020/Reports/LR2020_SiteDetails_2021-05-03T04_47_08.770Z.csv")
@@ -33,6 +30,21 @@ site_details_gadm <- pbi_map_gadm(
 # downsampled using grid based approach
 site_details_grid <- pbi_map_grid(
   site_details
-)
+) %>%
+  mutate(
+    spatial_location = as.character(spatial_location)
+  )
 
-# save stuff TODO
+# bind anonymized data
+site_details <- bind_rows(site_details_gadm, site_details_grid)
+
+# save to disk
+
+write.table(
+  site_details,
+  "/scratch/LACUNA/data_product/meta-data/site_specifications.csv",
+  quote = FALSE,
+  row.names = FALSE,
+  col.names = TRUE,
+  sep = ","
+)

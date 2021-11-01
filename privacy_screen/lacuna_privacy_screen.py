@@ -4,7 +4,6 @@
 
 # general file sorting tools
 import os, argparse, glob, sys
-import time
 
 # data wrangling tools
 import numpy as np

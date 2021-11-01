@@ -20,6 +20,12 @@ Please reference both repositories in addition to acknowledging license requirem
 - numpy and pandas
 - opencv
 
+## Running a screening test
+
+```python
+python3 lacuna_privacy_screen.py -d /backup/see_it_grow/ -o /scratch/LACUNA/data_product/images/
+```
+
 ## Licensing
 
 - The VGG16-places365 weights were released by [landmark-recognition-challenge](https://github.com/antorsae/landmark-recognition-challenge) under the [GNU General Public License v3.0](https://github.com/antorsae/landmark-recognition-challenge/blob/master/LICENSE)
