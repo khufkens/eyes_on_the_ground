@@ -35,9 +35,3 @@ This project is a collaboration between the Lacuna Fund, ACRE Africa, IFPRI, CGI
 ### References
 
 - Hufkens K, Melaas EK, Mann ML, Foster T, Ceballos F, Robles M, Kramer B Agricultural and Forest Meteorology Monitoring crop phenology using a smartphone based near-surface remote sensing approach. (2018) Agricultural and Forest Meteorology, 265, 327–337.
-
-- Joint face detection and alignment using multitask cascaded convolutional networks. Zhang, K., Zhang, Z., Li, Z., and Qiao, Y. (2016). IEEE Signal Processing Letters, 23(10):1499–1503.
-
-- Places: A 10 million Image Database for Scene Recognition
-B. Zhou, A. Lapedriza, A. Khosla, A. Oliva, and A. Torralba (2017).
-IEEE Transactions on Pattern Analysis and Machine Intelligence

@@ -115,6 +115,14 @@
 <p>In our setup we use two common models to label both vegetation and faces. For the former we use a keras implementation of the PLACES365 VGG model, for the latter we use the MTCNN face recognition library.</p>
 <p>The provided solution does not offer a retrained model specific to the circumstances of the field trials in order to scale flexibly. A trained model would be specific to a given field trial. Where accuracy might be higher, it would be less widely deployable compared to the unaltered model.</p>
 <p>The output, which lists both the accuracy (%) and the original labels allows for post-processing and manual screening to remove remaining mislabelled images (and either classify them as either a privacy issue or not).</p>
+<div id="references" class="section level3">
+<h3 class="hasAnchor">
+<a href="#references" class="anchor"></a>References</h3>
+<ul>
+<li><p>Joint face detection and alignment using multitask cascaded convolutional networks. Zhang, K., Zhang, Z., Li, Z., and Qiao, Y. (2016). IEEE Signal Processing Letters, 23(10):1499–1503.</p></li>
+<li><p>Places: A 10 million Image Database for Scene Recognition B. Zhou, A. Lapedriza, A. Khosla, A. Oliva, and A. Torralba (2017). IEEE Transactions on Pattern Analysis and Machine Intelligence</p></li>
+</ul>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
