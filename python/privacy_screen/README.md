@@ -14,7 +14,7 @@ Please reference both repositories in addition to acknowledging license requirem
 
 ## System Requirements
 
-- Python 3.4+
+- Python 3.4+ (>3.7 for the stac formatting)
 - Tensorflow 2.6
 - Keras 2.6
 - numpy and pandas

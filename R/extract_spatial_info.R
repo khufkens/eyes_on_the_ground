@@ -9,7 +9,7 @@
 #'
 #' @return dataframe with lat lon values mapped to centroids
 #' @export
-#' 
+
 pbi_map_gadm <- function(
   df,
   country
