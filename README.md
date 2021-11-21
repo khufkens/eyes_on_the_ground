@@ -6,11 +6,7 @@ The 'Eyes on the Ground' project is a collaboration between IFPRI/CGIAR, the Lac
 
 These images provide information on the progression of the growing season and a direct assessment of the corp status by visual means. Within the context of insurance image derived metrics can be seen as equivalent to index based insurance. However, evaluating these images manually is time intensive and does not scale well.
 
-Here, the 'Eyes on the Ground' project provides annotated data set of >35K images in order to support ML model development to address the annotation and detection of crop status (disease, disturbance). This data will have valuable contributions in applications such as crop modeling, agricultural finance and insurance, agricultural advisories, and early warning systems. Within the context of the project BlueGreen Labs provided data processing code, [SpatioTemporal Asset Catalog (STAC)](https://stacspec.org/) formatting as well as training. While, BlueGreen Labs historically was key in developing the underlying picture based insurance protocols (see Hufkens et al. 2018).
-
-### Introduction
-
-This codebase serves a number of purposes as listed below. For a full workflow on all these topics we refer to the individual articles.
+The codebase as presented in this repository serves a number of purposes as listed below. The goal is to provide an annotated data set of >35K images in order to support ML model development to address the annotation and detection of crop status (disease, disturbance). Within the context of the project BlueGreen Labs provided data processing code, [SpatioTemporal Asset Catalog (STAC)](https://stacspec.org/) formatting as well as training. BlueGreen Labs historically was key in developing the underlying picture based insurance protocols (see Hufkens et al. 2018). For a full workflow on all these topics we refer to the individual articles. This data will be a valuable contribution to applications such as crop modeling, agricultural finance and insurance, agricultural advisories, and early warning systems. 
 
 ### 1. Privacy screening
 
