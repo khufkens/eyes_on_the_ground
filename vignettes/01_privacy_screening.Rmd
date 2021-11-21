@@ -1,6 +1,5 @@
 ---
 title: "1. Privacy screening"
-author: "Koen Hufkens"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{1. Privacy screening}

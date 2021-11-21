@@ -1,6 +1,5 @@
 ---
 title: "2. Ancillary data download"
-author: "Koen Hufkens"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{2. Ancillary data download}
