@@ -2,11 +2,11 @@
 
 ## Providing quality model training data through smartphone images of crops
 
-The 'Eyes on the Ground' project is a collaboration between IFPRI/CGIAR, the Lacuna Fund to create a large machine learning (ML) dataset of smallholder farmer's fields based upon previous work within the Picture Based Insurance framework.
+The 'Eyes on the Ground' project is a collaboration between IFPRI/CGIAR, the Lacuna Fund to create a large machine learning (ML) dataset of smallholder farmer's fields based upon previous work within the Picture Based Insurance framework (Ceballos 2019).
 
 These images provide information on the progression of the growing season and a direct assessment of the corp status by visual means. Within the context of insurance image derived metrics can be seen as equivalent to index based insurance. However, evaluating these images manually is time intensive and does not scale well.
 
-The codebase as presented in this repository serves a number of purposes as listed below. The goal is to provide an annotated data set of >35K images in order to support ML model development to address the annotation and detection of crop status (disease, disturbance). Within the context of the project BlueGreen Labs provided data processing code, [SpatioTemporal Asset Catalog (STAC)](https://stacspec.org/) formatting as well as training. BlueGreen Labs historically was key in developing the underlying picture based insurance protocols (see Hufkens et al. 2018). For a full workflow on all these topics we refer to the individual articles. This data will be a valuable contribution to applications such as crop modeling, agricultural finance and insurance, agricultural advisories, and early warning systems. 
+The codebase as presented in this repository serves a number of purposes as listed below. The goal is to provide an annotated data set of >35K images in order to support ML model development to address the annotation and detection of crop status (disease, disturbance). Within the context of the project BlueGreen Labs provided data processing code, [SpatioTemporal Asset Catalog (STAC)](https://stacspec.org/) formatting as well as training. BlueGreen Labs historically was key in developing the underlying picture based insurance protocols (Hufkens et al. 2018). For a full workflow on all these topics we refer to the individual articles. This data will be a valuable contribution to applications such as crop modeling, agricultural finance and insurance, agricultural advisories, and early warning systems. 
 
 ### 1. Privacy screening
 
@@ -26,4 +26,6 @@ This project is a collaboration between the Lacuna Fund, ACRE Africa, IFPRI, CGI
 
 ### References
 
-- Hufkens K, Melaas EK, Mann ML, Foster T, Ceballos F, Robles M, Kramer B Agricultural and Forest Meteorology Monitoring crop phenology using a smartphone based near-surface remote sensing approach. (2018) Agricultural and Forest Meteorology, 265, 327–337.
+- Ceballos F., Kramer B., Robles M. The feasibility of picture-based insurance (PBI): Smartphone pictures for affordable crop insurance. (2019) Development Engineering, 4, 100042. ([PDF](https://www.sciencedirect.com/science/article/pii/S2352728518300812))
+
+- Hufkens K, Melaas EK, Mann ML, Foster T, Ceballos F, Robles M, Kramer B. Monitoring crop phenology using a smartphone based near-surface remote sensing approach. (2018) Agricultural and Forest Meteorology, 265, 327–337. ([PDF](https://www.sciencedirect.com/science/article/pii/S0168192318303484))
