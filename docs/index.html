@@ -114,21 +114,16 @@
 <div id="introduction" class="section level3">
 <h3 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h3>
-<p>This codebase serves a number of purposes:</p>
-<ol>
-<li>It provide a method to let data providers quickly screen for privacy issues of images collected in the field.</li>
-<li>It provides ancillary data with these images to support remote sensing applications.</li>
-<li>It allows for the formatting of the final data and meta-data using the STAC protocol for dissemination and easy ML development.</li>
-</ol>
+<p>This codebase serves a number of purposes as listed below. For a full workflow on all these topics we refer to the individual articles.</p>
 </div>
 <div id="1-privacy-screening" class="section level3">
 <h3 class="hasAnchor">
 <a href="#1-privacy-screening" class="anchor"></a>1. Privacy screening</h3>
 <p>Crop images are collected by farmers in support of insurance practices and crop monitoring. However, oversight, inexperience with digital technology can lead to situations where people’s private property or recognizable faces are present within a dataset which will be distributed widely and openly. This presents a clear privacy issue in violation with Internal Review Board requirements and consent agreements. Historically, manual screening was applied. However, with growing field trials this is not a long term solution. As such, an automated filter should relieve some of the burden. Here, we use existing deep learning models to screen crops for non-vegetation images and human faces. Data allows for the screening of a single image or a whole directory of images (recursively parsed) with results returne as a CSV file for post-processing.</p>
 </div>
-<div id="2-ancillary-data-remote-sensing-data" class="section level3">
+<div id="2-ancillary-data-remote-sensing" class="section level3">
 <h3 class="hasAnchor">
-<a href="#2-ancillary-data-remote-sensing-data" class="anchor"></a>2. Ancillary data remote sensing data</h3>
+<a href="#2-ancillary-data-remote-sensing" class="anchor"></a>2. Ancillary data remote sensing</h3>
 <p>A second part of the processing requires amending seasonal crop image with ancillary remote sensing data and climate data for machine learning purposes. Remote sensing data will be stripped of geographic location data to provide anonymous but meaningful data for remote sensing analysis together with the original field based images. Data will be formatted as STAC compliant (see 3).</p>
 </div>
 <div id="3-stac-processing" class="section level3">

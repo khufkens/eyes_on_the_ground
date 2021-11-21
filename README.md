@@ -10,17 +10,13 @@ Here, the 'Eyes on the Ground' project provides annotated data set of >35K image
 
 ### Introduction
 
-This codebase serves a number of purposes:
-
-1. It provide a method to let data providers quickly screen for privacy issues of images collected in the field. 
-1. It provides ancillary data with these images to support remote sensing applications.
-1. It allows for the formatting of the final data and meta-data using the STAC protocol for dissemination and easy ML development.
+This codebase serves a number of purposes as listed below. For a full workflow on all these topics we refer to the individual articles.
 
 ### 1. Privacy screening
 
 Crop images are collected by farmers in support of insurance practices and crop monitoring. However, oversight, inexperience with digital technology can lead to situations where people's private property or recognizable faces are present within a dataset which will be distributed widely and openly. This presents a clear privacy issue in violation with Internal Review Board requirements and consent agreements. Historically, manual screening was applied. However, with growing field trials this is not a long term solution. As such, an automated filter should relieve some of the burden. Here, we use existing deep learning models to screen crops for non-vegetation images and human faces. Data allows for the screening of a single image or a whole directory of images (recursively parsed) with results returne as a CSV file for post-processing.
 
-### 2. Ancillary data remote sensing data
+### 2. Ancillary data remote sensing
 
 A second part of the processing requires amending seasonal crop image with ancillary remote sensing data and climate data for machine learning purposes. Remote sensing data will be stripped of geographic location data to provide anonymous but meaningful data for remote sensing analysis together with the original field based images. Data will be formatted as STAC compliant (see 3).
 
