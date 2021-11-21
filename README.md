@@ -12,9 +12,9 @@ Here, the 'Eyes on the Ground' project provides annotated data set of >35K image
 
 This codebase serves a number of purposes:
 
-- It provide a method to let data providers quickly screen for privacy issues of images collected in the field. 
-- It provides ancillary data with these images to support remote sensing applications.
-- It allows for the formatting of the final data and meta-data using the STAC protocol for dissemination and easy ML development.
+1. It provide a method to let data providers quickly screen for privacy issues of images collected in the field. 
+1. It provides ancillary data with these images to support remote sensing applications.
+1. It allows for the formatting of the final data and meta-data using the STAC protocol for dissemination and easy ML development.
 
 ### 1. Privacy screening
 
