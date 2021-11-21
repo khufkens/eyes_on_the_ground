@@ -9,7 +9,7 @@ authors:
 
 navbar:
   structure:
-    left:  [home, intro, reference, articles, tutorials, news]
+    left:  [home, intro, articles, tutorials, news, reference]
     right: [github]
   components:
     twitter:

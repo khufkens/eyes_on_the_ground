@@ -2,55 +2,42 @@
 
 ## Providing quality model training data through smartphone images of crops
 
-Processing code to create a unique dataset of at least 35,000 timestamped georeferenced crop images, along with various labels on input use, crop management, phenology, crop damage and yields.
+The 'Eyes on the Ground' project is a collaboration between IFPRI/CGIAR, the Lacuna Fund to create a large machine learning (ML) dataset of smallholder farmer's fields based upon previous work within the Picture Based Insurance framework.
 
-This data will have valuable contributions in applications such as crop modeling, agricultural finance and insurance, agricultural advisories, and early warning systems. 
+These images provide information on the progression of the growing season and a direct assessment of the corp status by visual means. Within the context of insurance image derived metrics can be seen as equivalent to index based insurance. However, evaluating these images manually is time intensive and does not scale well.
+
+Here, the 'Eyes on the Ground' project provides annotated data set of >35K images in order to support ML model development to address the annotation and detection of crop status (disease, disturbance). This data will have valuable contributions in applications such as crop modeling, agricultural finance and insurance, agricultural advisories, and early warning systems. Within the context of the project BlueGreen Labs provided data processing code, [SpatioTemporal Asset Catalog (STAC)](https://stacspec.org/) formatting as well as training. While, BlueGreen Labs historically was key in developing the underlying picture based insurance protocols (see Hufkens et al. 2018).
 
 ### Introduction
 
-This codebase serves two purposes, first provide a method to let data providers quickly screen for privacy issues of images collected in the field. Second, provide ancillary data with these images to support remote sensing applications.
+This codebase serves a number of purposes:
 
-### Privacy screening
+- It provide a method to let data providers quickly screen for privacy issues of images collected in the field. 
+- It provides ancillary data with these images to support remote sensing applications.
+- It allows for the formatting of the final data and meta-data using the STAC protocol for dissemination and easy ML development.
 
-Crop images are collected by farmers in support of insurance practices and crop monitoring. However, oversight, inexperience with digital technology can lead to situations where people's private property or recognizable faces are present within a dataset which will be distributed widely and openly. This presents a clear privacy issue in violation with IRB requirements. Historically, manual screening was applied. However, with growing field trials this is not a long term solution. As such, an automated filter should relieve some of the burden.
+### 1. Privacy screening
 
-Here, we use existing deep learning models to screen crops for non-vegetation images and human faces. Data allows for the screening of a single image or a whole directory of images (recursively parsed) with results returne as a CSV file for post-processing.
+Crop images are collected by farmers in support of insurance practices and crop monitoring. However, oversight, inexperience with digital technology can lead to situations where people's private property or recognizable faces are present within a dataset which will be distributed widely and openly. This presents a clear privacy issue in violation with Internal Review Board requirements and consent agreements. Historically, manual screening was applied. However, with growing field trials this is not a long term solution. As such, an automated filter should relieve some of the burden. Here, we use existing deep learning models to screen crops for non-vegetation images and human faces. Data allows for the screening of a single image or a whole directory of images (recursively parsed) with results returne as a CSV file for post-processing.
 
-In our setup we use two common models to label both vegetation and faces. For the former we use a keras implementation of the PLACES365 VGG model, for the latter we use the MTCNN face recognition library.
+### 2. Ancillary data remote sensing data
 
-The provided solution does not offer a retrained model specific to the circumstances of the field trials in order to scale flexibly. A trained model would be specific to a given field trial. Where accuracy might be higher, it would be less widely deployable compared to the unaltered model.
+A second part of the processing requires amending seasonal crop image with ancillary remote sensing data and climate data for machine learning purposes. Remote sensing data will be stripped of geographic location data to provide anonymous but meaningful data for remote sensing analysis together with the original field based images. Data will be formatted as STAC compliant (see 3).
 
-The output, which lists both the accuracy (%) and the original labels allows for post-processing and manual screening to remove remaining mislabelled images (and either classify them as either a privacy issue or not).
-
-### Ancillary data remote sensing data
-
-A second part of the processing requires amending seasonal image with ancillary remote sensing data. Remote sensing data will be stripped of geographic location data to provide anonymous but meaning full data for remote sensing analysis in conjunction with the original field based images. Data will be formatted as [STAC compliant](https://stacspec.org/).
-
-Downloads of ancillary data are done using python code which taps into the Google Earth Engine back end. You can install the required package using `pip3 install gee-subset`. Check other requirements in the requirements.txt file as well. The code will run for specific locations and date ranges to be set manually. Final output will strip the data from spatial identifiers and list the pixel data (if there are multiple returns from top-left to bottom-right row wise).
-
-### STAC processing
+### 3. STAC processing
 
 The above data is then compiled into a STAC catalogue, with the following structure. The focus here is on the image data, keeping the remote sensing data separate. The remote sensing data can however easily be merged to provide a consistent (machine learning) dataset. Note that no interpolation is done on the data products to retain the original data as much as possible. The latter is up to the user as many different interpolation strategies exist.
 
-![](stac_diagram.svg)
+## Project partners
 
-## Data sources
-
-Polygons of villages were provided by the World Resource Insitute. Only labels are used and the original data needs to be downloaded from this location:
-
-https://datasets.wri.org/dataset/district-administrative-boundaries-of-kenya
-
-or sourced from the data directory of this project.
-
-## Acknowledgements
-
-This project is a collaboration between ACRE, IFPRI, CGIAR Big Data, and the Lacuna Fund.
+This project is a collaboration between the Lacuna Fund, ACRE Africa, IFPRI, CGIAR Big Data, and Radiant Earth.
 
 ### References
+
+- Hufkens K, Melaas EK, Mann ML, Foster T, Ceballos F, Robles M, Kramer B Agricultural and Forest Meteorology Monitoring crop phenology using a smartphone based near-surface remote sensing approach. (2018) Agricultural and Forest Meteorology, 265, 327–337.
+
+- Joint face detection and alignment using multitask cascaded convolutional networks. Zhang, K., Zhang, Z., Li, Z., and Qiao, Y. (2016). IEEE Signal Processing Letters, 23(10):1499–1503.
 
 - Places: A 10 million Image Database for Scene Recognition
 B. Zhou, A. Lapedriza, A. Khosla, A. Oliva, and A. Torralba (2017).
 IEEE Transactions on Pattern Analysis and Machine Intelligence
-
-- Joint face detection and alignment using multitask cascaded convolutional networks. Zhang, K., Zhang, Z., Li, Z., and Qiao, Y. (2016). IEEE Signal Processing Letters, 23(10):1499–1503.
-

@@ -1,0 +1,23 @@
+---
+title: "2. Ancillary data download"
+author: "Koen Hufkens"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{2. Ancillary data download}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Downloads of ancillary data are done using python code which taps into the Google Earth Engine back end. You can install the required package using `pip3 install gee-subset`. Check other requirements in the requirements.txt file as well. The code will run for specific locations and date ranges to be set manually. Final output will strip the data from spatial identifiers and list the pixel data (if there are multiple returns from top-left to bottom-right row wise).
+
+## Data sources
+
+Polygons of villages were provided by the World Resource Insitute. Only labels are used and the original data needs to be downloaded from this location:
+
+https://datasets.wri.org/dataset/district-administrative-boundaries-of-kenya
+
+or sourced from the data directory of this project.

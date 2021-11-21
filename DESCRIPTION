@@ -6,16 +6,13 @@ Authors@R: c(person(
                given = "Koen",
                email = "koen.hufkens@gmail.com",
                role = c("aut", "cre"),
-               comment = c(ORCID = "0000-0002-5070-8109")))
+               comment = c(ORCID = "0000-0002-5070-8109")),
+              person(given = "BlueGreen Labs",
+                role = c("cph", "fnd")))
 Description: Wrapper package / project for the Eyes on the Ground
- project. This collaboration between IFPRI and LACUNA provides
- Machine Learning ground validation data collected through smartphone
- images at smallholder farmer's fields in Kenya. The package
- contains a few functions for anomyzing the raw data, as well as
- many more python components to screen the images for privacy related
- concerns (non-field images, or people in the field-of-view).
+ project.
 Depends:
-    R (>= 3.6)
+    R (>= 4.0)
 License: AGPL-3
 LazyData: true
 ByteCompile: true
