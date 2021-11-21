@@ -111,9 +111,38 @@
 
     
     
-<p>In our setup we use two common models to label both vegetation and faces. For the former we use a keras implementation of the PLACES365 VGG model, for the latter we use the MTCNN face recognition library.</p>
-<p>The provided solution does not offer a retrained model specific to the circumstances of the field trials in order to scale flexibly. A trained model would be specific to a given field trial. Where accuracy might be higher, it would be less widely deployable compared to the unaltered model.</p>
-<p>The output, which lists both the accuracy (%) and the original labels allows for post-processing and manual screening to remove remaining mislabelled images (and either classify them as either a privacy issue or not).</p>
+<p>The ‘Eyes on the Ground’ project collected large volumes of data. These data are currently manually screened for privacy and within the context of providing ML labels. However, expanding this project would require automated screening for privacy in order to reduce this workload. This is an implementation using current <a href="https://keras.io">Keras</a> frameworks to screen data for content and faces.</p>
+<div id="automated-screening" class="section level2">
+<h2 class="hasAnchor">
+<a href="#automated-screening" class="anchor"></a>Automated screening</h2>
+<div id="requirements" class="section level3">
+<h3 class="hasAnchor">
+<a href="#requirements" class="anchor"></a>Requirements</h3>
+<p>To ensure not leakage images showing faces we used the Multitask cascade convolutional network (MTCNN, Zhang et al. 2016) face detection implementation as provided through the MTCNN python library. The library is installed from <code>pip</code> using:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip3</span> install MTCNN</span></code></pre></div>
+<p>For scene characterization we use the PLACES365 VGG model (Zhou et al. 2017). We did not provide a fine tuned version of the model. The model is therefore not specific to the circumstances of the field trials in order to scale flexibly to new environments. This trade-off will result in a lower accuracy but we suggest limited manual screening (based upon classification accuracy) regardless of the workflow or model used. Model structure and weights are provided (downloaded) through the PLACES365 routine. Other dependencies are however required, in particular image processing libraries <code>cv</code> and <code>PIL</code>.</p>
+<p>You can use the pip environment to satisfy these requirements.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip3</span> install cv2</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip3</span> install PIL</span></code></pre></div>
+</div>
+<div id="results" class="section level3">
+<h3 class="hasAnchor">
+<a href="#results" class="anchor"></a>Results</h3>
+<p>For a single image or image directory you can run the routine using the <code>lacuna_privacy_screen.py</code> script (see python/privacy_screen folder). For a folder of images you call the program as such:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> lacuna_privacy_screen.py <span class="dt">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">"/your/image/directory"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-o</span> <span class="st">"/your/output/directory"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-e</span> <span class="st">'jpg'</span></span></code></pre></div>
+<p>Note that we filter on image extension. The output of both screening routines is returned as a CSV file in the output directory. This CSV lists both the accuracy (%) and the original labels allows for post-processing and manual screening to remove remaining mislabeled images.</p>
+<blockquote>
+<p>Note that images are copied to the new location. This is required as screening for faces, and hiding them with a black square, would alter the source data.</p>
+</blockquote>
+</div>
+</div>
+<div id="post-screening" class="section level2">
+<h2 class="hasAnchor">
+<a href="#post-screening" class="anchor"></a>Post-screening</h2>
+<p>Note that all data need revision based upon classification accuracy. Subsets of the larger dataset can be generated based on these accuracy values and rapidly screened using a command line image viewer such as <code>feh</code>.</p>
 <div id="references" class="section level3">
 <h3 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h3>
@@ -122,11 +151,14 @@
 <li><p>Places: A 10 million Image Database for Scene Recognition B. Zhou, A. Lapedriza, A. Khosla, A. Oliva, and A. Torralba (2017). IEEE Transactions on Pattern Analysis and Machine Intelligence</p></li>
 </ul>
 </div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 

@@ -11,12 +11,104 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Downloads of ancillary data are done using python code which taps into the Google Earth Engine back end. You can install the required package using `pip3 install gee-subset`. Check other requirements in the requirements.txt file as well. The code will run for specific locations and date ranges to be set manually. Final output will strip the data from spatial identifiers and list the pixel data (if there are multiple returns from top-left to bottom-right row wise).
+The EotG project provides ancillary data for a limited number of data products most relevant within the context of machine learning and/or index based insurance in relation to the acquired crop images. Depending on the data product different approaches are required, depending on API based queries at point locations or prior bulk downloads of datasets (for subsequent subsetting). 
+
+In this data product we'll provide ancillary data for the following data products:
+
+- African Rainfall Climatology (ARC v2)
+- Tropical Applications of Meteorology using SATellite data ([TAMSAT](https://www.tamsat.org.uk/)) rainfall
+- Sentinel-2 (bands 1 - 4, 8, AOT, SCL, QA60)
+- Sentinel-1 (bands VH / VV)
+- ERA-5 daily aggregates
+  - surface pressure
+  - mean 2m air temperature
+  - minimum 2m air temperature
+  - maximum 2m air temperature
+  - 2m dewpoint temperature
+  - total precipitation
+  - surface pressure
+  - mean sea level pressure
+  - u component of wind 10m
+  - v component of wind 10m
+
+## Bulk data downloads
+
+Both the ARC and TAMSAT data can't be queried using simple (GEE) API calls. As such these data need to be downloaded before processing. Data downloads for both products is covered by the python script `download_arc_tamsat.py`. (see repository python/data_extractor folder)
+
+```bash
+# downloads ARC data
+python download_arc_tamsat.py -y 2000 -p 'ARC' -d "/your/data/archive"
+
+# downloads TAMSAT data
+python download_arc_tamsat.py -y 2000 -p 'TAMSAT' -d "/your/data/archive"
+```
+
+Looping over all required years ensures complete data coverage. Data is either daily or 3-hourly, but downloads are covered on a yearly basis for reasonable convenience vs speed trade-offs. All data needs to be available to generate (and compliment) all remaining data as listed above.
+
+## API based data queries
+
+Downloads of remaining ancillary data products is done using python code which taps into the Google Earth Engine (GEE) back end. Our `data_extractor.py` script (see repository python/data_extractor folder), a wrapper around our gee-subset python package, ensures an easy interface for rapid extraction of point locations. Some pre-requisites do apply however.
+
+### Requirements
+
+You can install the required package using:
+
+```bash
+pip3 install gee-subset
+```
+
+Be sure to install and verify your GEE API code. Installation instructions can be found on the [GEE website](https://developers.google.com/earth-engine/guides/python_install). For more information on the gee-subset package we refer to [its repository](https://github.com/bluegreen-labs/gee_subset).
+
+Additional python package requirements include:
+
+- pandas
+- datetime
+- os
+- re
+- argparse
+
+### Single API downloads
+
+The code will run for specific locations and date ranges to be set manually. Final output will strip the data from spatial identifiers and list the pixel data (if there are multiple returns from top-left to bottom-right row wise).
+
+```bash
+python data_extractor.py -lat -20 -lon 20 \
+  -s "2020-01-01" - e "2020-01-20"\
+  -d "/your/data/archive" -f "file_prefix"
+```
+
+### Batch downloads for farmer field locations
+
+The above script only queries a single location for a given date range. The processing of the complete dataset of all field locations requires us to loop over all these locations. In order to make this processing easy, and at the same time integrate the downloaded TAMSAT and ARC data in a single file an `R` script, `collect_ancillary_data()`, is provided (see R/ folder).
+
+The script takes a dataframe (df) with coordinates of unique fields and downloads the required data via the GEE API. In one pass it also subsets the previously downloaded (see above). As such you need to specify a source directory where to find the downloaded files.  
+
+```r
+output <- collect_ancillary_data(
+  df = df,
+  source = "/your/data/archive",
+  dest = "/final/data/product"
+)
+```
+
+This routine will provide tidy data on all ancillary data. Data will be returned to the `R` working environment or written to a final `dest` directory as a csv file. This data file will serve as input for the final formatting of the STAC catalogue(s).
 
 ## Data sources
+
+#### African Rainfall Climatology (ARC v2):
+
+https://www.icpac.net/data-center/arc2/
+
+sourced form:
+
+http://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.DAILY/.ARC2/.daily/
+
+#### TAMSAT
+
+https://www.tamsat.org.uk/
+
+#### Administrative boundaries
 
 Polygons of villages were provided by the World Resource Insitute. Only labels are used and the original data needs to be downloaded from this location:
 
 https://datasets.wri.org/dataset/district-administrative-boundaries-of-kenya
-
-or sourced from the data directory of this project.

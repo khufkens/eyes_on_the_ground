@@ -14,7 +14,7 @@
 #' @return a
 #' @export
 
-download_sat_data <- function(
+collect_ancillary_data <- function(
   df,
   source = tempdir(),
   dest

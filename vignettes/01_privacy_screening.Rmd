@@ -11,12 +11,45 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In our setup we use two common models to label both vegetation and faces. For the former we use a keras implementation of the PLACES365 VGG model, for the latter we use the MTCNN face recognition library.
+The 'Eyes on the Ground' project collected large volumes of data. These data are currently manually screened for privacy and within the context of providing ML labels. However, expanding this project would require automated screening for privacy in order to reduce this workload. This is an implementation using current [Keras](https://keras.io) frameworks to screen data for content and faces.
 
-The provided solution does not offer a retrained model specific to the circumstances of the field trials in order to scale flexibly. A trained model would be specific to a given field trial. Where accuracy might be higher, it would be less widely deployable compared to the unaltered model.
+## Automated screening
 
-The output, which lists both the accuracy (%) and the original labels allows for post-processing and manual screening to remove remaining mislabelled images (and either classify them as either a privacy issue or not).
+### Requirements
 
+To ensure not leakage images showing faces we used the Multitask cascade convolutional network (MTCNN, Zhang et al. 2016) face detection implementation as provided through the MTCNN python library. The library is installed from `pip` using:
+
+```bash
+pip3 install MTCNN
+```
+
+For scene characterization we use the PLACES365 VGG model (Zhou et al. 2017). We did not provide a fine tuned version of the model. The model is therefore not specific to the circumstances of the field trials in order to scale flexibly to new environments. This trade-off will result in a lower accuracy but we suggest limited manual screening (based upon classification accuracy) regardless of the workflow or model used. Model structure and weights are provided (downloaded) through the PLACES365 routine. Other dependencies are however required, in particular image processing libraries `cv` and `PIL`.
+
+You can use the pip environment to satisfy these requirements.
+
+```bash
+pip3 install cv2
+pip3 install PIL
+```
+
+### Results
+
+For a single image or image directory you can run the routine using the `lacuna_privacy_screen.py` script (see python/privacy_screen folder). For a folder of images you call the program as such:
+
+```bash
+python lacuna_privacy_screen.py \
+  -d "/your/image/directory"
+  -o "/your/output/directory"
+  -e 'jpg'
+```
+
+Note that we filter on image extension. The output of both screening routines is returned as a CSV file in the output directory. This CSV lists both the accuracy (%) and the original labels allows for post-processing and manual screening to remove remaining mislabeled images.
+
+> Note that images are copied to the new location. This is required as screening for faces, and hiding them with a black square, would alter the source data.
+
+## Post-screening
+
+Note that all data need revision based upon classification accuracy. Subsets of the larger dataset can be generated based on these accuracy values and rapidly screened using a command line image viewer such as `feh`.
 
 ### References
 

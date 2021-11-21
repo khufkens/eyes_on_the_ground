@@ -111,13 +111,101 @@
 
     
     
-<p>Downloads of ancillary data are done using python code which taps into the Google Earth Engine back end. You can install the required package using <code>pip3 install gee-subset</code>. Check other requirements in the requirements.txt file as well. The code will run for specific locations and date ranges to be set manually. Final output will strip the data from spatial identifiers and list the pixel data (if there are multiple returns from top-left to bottom-right row wise).</p>
+<p>The EotG project provides ancillary data for a limited number of data products most relevant within the context of machine learning and/or index based insurance in relation to the acquired crop images. Depending on the data product different approaches are required, depending on API based queries at point locations or prior bulk downloads of datasets (for subsequent subsetting).</p>
+<p>In this data product we’ll provide ancillary data for the following data products:</p>
+<ul>
+<li>African Rainfall Climatology (ARC v2)</li>
+<li>Tropical Applications of Meteorology using SATellite data (<a href="https://www.tamsat.org.uk/">TAMSAT</a>) rainfall</li>
+<li>Sentinel-2 (bands 1 - 4, 8, AOT, SCL, QA60)</li>
+<li>Sentinel-1 (bands VH / VV)</li>
+<li>ERA-5 daily aggregates
+<ul>
+<li>surface pressure</li>
+<li>mean 2m air temperature</li>
+<li>minimum 2m air temperature</li>
+<li>maximum 2m air temperature</li>
+<li>2m dewpoint temperature</li>
+<li>total precipitation</li>
+<li>surface pressure</li>
+<li>mean sea level pressure</li>
+<li>u component of wind 10m</li>
+<li>v component of wind 10m</li>
+</ul>
+</li>
+</ul>
+<div id="bulk-data-downloads" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bulk-data-downloads" class="anchor"></a>Bulk data downloads</h2>
+<p>Both the ARC and TAMSAT data can’t be queried using simple (GEE) API calls. As such these data need to be downloaded before processing. Data downloads for both products is covered by the python script <code>download_arc_tamsat.py</code>. (see repository python/data_extractor folder)</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># downloads ARC data</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> download_arc_tamsat.py <span class="at">-y</span> 2000 <span class="at">-p</span> <span class="st">'ARC'</span> <span class="at">-d</span> <span class="st">"/your/data/archive"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># downloads TAMSAT data</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> download_arc_tamsat.py <span class="at">-y</span> 2000 <span class="at">-p</span> <span class="st">'TAMSAT'</span> <span class="at">-d</span> <span class="st">"/your/data/archive"</span></span></code></pre></div>
+<p>Looping over all required years ensures complete data coverage. Data is either daily or 3-hourly, but downloads are covered on a yearly basis for reasonable convenience vs speed trade-offs. All data needs to be available to generate (and compliment) all remaining data as listed above.</p>
+</div>
+<div id="api-based-data-queries" class="section level2">
+<h2 class="hasAnchor">
+<a href="#api-based-data-queries" class="anchor"></a>API based data queries</h2>
+<p>Downloads of remaining ancillary data products is done using python code which taps into the Google Earth Engine (GEE) back end. Our <code>data_extractor.py</code> script (see repository python/data_extractor folder), a wrapper around our gee-subset python package, ensures an easy interface for rapid extraction of point locations. Some pre-requisites do apply however.</p>
+<div id="requirements" class="section level3">
+<h3 class="hasAnchor">
+<a href="#requirements" class="anchor"></a>Requirements</h3>
+<p>You can install the required package using:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip3</span> install gee-subset</span></code></pre></div>
+<p>Be sure to install and verify your GEE API code. Installation instructions can be found on the <a href="https://developers.google.com/earth-engine/guides/python_install">GEE website</a>. For more information on the gee-subset package we refer to <a href="https://github.com/bluegreen-labs/gee_subset">its repository</a>.</p>
+<p>Additional python package requirements include:</p>
+<ul>
+<li>pandas</li>
+<li>datetime</li>
+<li>os</li>
+<li>re</li>
+<li>argparse</li>
+</ul>
+</div>
+<div id="single-api-downloads" class="section level3">
+<h3 class="hasAnchor">
+<a href="#single-api-downloads" class="anchor"></a>Single API downloads</h3>
+<p>The code will run for specific locations and date ranges to be set manually. Final output will strip the data from spatial identifiers and list the pixel data (if there are multiple returns from top-left to bottom-right row wise).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> data_extractor.py <span class="at">-lat</span> <span class="at">-20</span> <span class="at">-lon</span> 20 <span class="dt">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> <span class="st">"2020-01-01"</span> <span class="at">-</span> e <span class="st">"2020-01-20"</span><span class="dt">\</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">"/your/data/archive"</span> <span class="at">-f</span> <span class="st">"file_prefix"</span></span></code></pre></div>
+</div>
+<div id="batch-downloads-for-farmer-field-locations" class="section level3">
+<h3 class="hasAnchor">
+<a href="#batch-downloads-for-farmer-field-locations" class="anchor"></a>Batch downloads for farmer field locations</h3>
+<p>The above script only queries a single location for a given date range. The processing of the complete dataset of all field locations requires us to loop over all these locations. In order to make this processing easy, and at the same time integrate the downloaded TAMSAT and ARC data in a single file an <code>R</code> script, <code><a href="../reference/collect_ancillary_data.html">collect_ancillary_data()</a></code>, is provided (see R/ folder).</p>
+<p>The script takes a dataframe (df) with coordinates of unique fields and downloads the required data via the GEE API. In one pass it also subsets the previously downloaded (see above). As such you need to specify a source directory where to find the downloaded files.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/collect_ancillary_data.html">collect_ancillary_data</a></span><span class="op">(</span>
+  df <span class="op">=</span> <span class="va">df</span>,
+  source <span class="op">=</span> <span class="st">"/your/data/archive"</span>,
+  dest <span class="op">=</span> <span class="st">"/final/data/product"</span>
+<span class="op">)</span></code></pre></div>
+<p>This routine will provide tidy data on all ancillary data. Data will be returned to the <code>R</code> working environment or written to a final <code>dest</code> directory as a csv file. This data file will serve as input for the final formatting of the STAC catalogue(s).</p>
+</div>
+</div>
 <div id="data-sources" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data-sources" class="anchor"></a>Data sources</h2>
+<div id="african-rainfall-climatology-arc-v2" class="section level4">
+<h4 class="hasAnchor">
+<a href="#african-rainfall-climatology-arc-v2" class="anchor"></a>African Rainfall Climatology (ARC v2):</h4>
+<p><a href="https://www.icpac.net/data-center/arc2/" class="uri">https://www.icpac.net/data-center/arc2/</a></p>
+<p>sourced form:</p>
+<p><a href="http://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.DAILY/.ARC2/.daily/" class="uri">http://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.DAILY/.ARC2/.daily/</a></p>
+</div>
+<div id="tamsat" class="section level4">
+<h4 class="hasAnchor">
+<a href="#tamsat" class="anchor"></a>TAMSAT</h4>
+<p><a href="https://www.tamsat.org.uk/" class="uri">https://www.tamsat.org.uk/</a></p>
+</div>
+<div id="administrative-boundaries" class="section level4">
+<h4 class="hasAnchor">
+<a href="#administrative-boundaries" class="anchor"></a>Administrative boundaries</h4>
 <p>Polygons of villages were provided by the World Resource Insitute. Only labels are used and the original data needs to be downloaded from this location:</p>
 <p><a href="https://datasets.wri.org/dataset/district-administrative-boundaries-of-kenya" class="uri">https://datasets.wri.org/dataset/district-administrative-boundaries-of-kenya</a></p>
-<p>or sourced from the data directory of this project.</p>
+</div>
 </div>
   </div>
 
