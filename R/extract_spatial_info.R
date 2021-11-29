@@ -37,38 +37,44 @@ pbi_map_gadm <- function(
   # download GADM data
   gadm <- raster::getData('GADM',
                           country = country,
-                          level=3,
-                          path = tempdir())
+                          level = 3,
+                          path = tempdir()
+                          )
+  
+  # convert to sf object
+  gadm <- st_as_sf(gadm)
   
   # convert coordinates to sp objects
-  lat_lon <- raster::projection(gadm)
-  location <- sp::SpatialPoints(cbind(df$lon,df$lat),
-                                sp::CRS(lat_lon))
+  location <- sf::st_as_sf(data.frame(
+    lon = df$lon,
+    lat = df$lat),
+    coords = c("lon", "lat"),
+    crs = 4326
+    )
   
-  # list centroid and cell values
-  centroids <- data.frame(sp::coordinates(gadm),
-                          cell_values = gadm@data$NAME_3)
+  # intersection list with the wards
+  location <- sf::st_intersects(location, gadm)
   
-  # find overlap between points and polygons
-  attributes <- sp::over(location, gadm)
-  attributes <- attributes[grepl("^NAME_*",names(attributes))]
-  names(attributes) <- c("country","state","county","town")
+  # select polygons
+  gadm <- gadm[unlist(location),]
+  
+  # grab bounding box
+  bbox <- do.call("rbind", lapply(sf::st_geometry(gadm), sf::st_bbox))
+  
+  # grab centroid
+  centroid <- do.call("rbind", lapply(sf::st_geometry(gadm), sf::st_centroid))
+  
+  # map centroids to lat lon
+  df$lon <- centroid[,1]
+  df$lat <- centroid[,2]
   
   # merge with data frame and drop points without an overlap
   df <- data.frame(df,
-                   spatial_location = attributes$town,
+                   spatial_location = gadm$NAME_3,
                    spatial_unit = "gadm",
+                   bbox,
                    stringsAsFactors = FALSE)
   df <- df[!is.na(df$spatial_location),]
-  
-  # map centroid coordinates to lat / lon
-  # anonymization process
-  for(i in 1:nrow(df)){
-    df$lat[i] <- 
-      centroids[centroids['cell_values'] == df[i,'spatial_location'], 2][1]
-    df$lon[i] <- 
-      centroids[centroids['cell_values'] == df[i,'spatial_location'], 1][1]
-  }
   
   return(df)
 }

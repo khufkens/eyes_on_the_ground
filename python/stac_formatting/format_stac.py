@@ -47,23 +47,24 @@ for index, row in df.iterrows():
     
     # Instantiate pystac item
     item = pystac.Item(
-                id= str(row["site_id"]),
-                geometry=geom,
-                bbox=bbox,
+                id = str(row["site_id"]),
+                geometry = geom,
+                bbox = bbox,
                 datetime = time_acquired,
-                properties={
+                properties = {
                 })
 
     # fill the item with data (links)
     item.add_asset(
-            key='analytic',
-            asset=pystac.Asset(
-                href=row['image_path'],
+            key = 'analytic',
+            asset = pystac.Asset(
+                href = row['image_path'],
                 title= "3 band RGB",
+                
                 # indicate it is a cloud optimized geotiff
-                media_type=pystac.MediaType.JPEG,
-                roles=([
-                "analytic"
+                media_type = pystac.MediaType.JPEG,
+                roles = ([
+                 "analytic"
                 ])
             )
     ) 
@@ -72,8 +73,8 @@ for index, row in df.iterrows():
 
 # create containing catalog
 catalog = pystac.Catalog(
-    id='sample-catalog',
-    description='Simple STAC catalog.'
+    id = 'sample-catalog',
+    description = 'Simple STAC catalog.'
     )
 
 #for index, item in enumerate(stac_items):

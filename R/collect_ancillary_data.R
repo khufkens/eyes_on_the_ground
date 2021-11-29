@@ -31,20 +31,27 @@ collect_ancillary_data <- function(
   df %>%
     rowwise() %>%
     do({
+      
       # make the gee_subset.py python call
       # time the duration of the call for reporting
-      system(sprintf("python3 data_extractor/data_extractor.py -lat %s -lon %s -s %s -e %s -d %s",
-                     lat,
-                     lon,
-                     start_date,
-                     end_date,
-                     source
+      system(
+        sprintf(
+          "python3 data_extractor/data_extractor.py -lat %s -lon %s -s %s -e %s -d %s",
+          lat,
+          lon,
+          start_date,
+          end_date,
+          source
       ), wait = TRUE)
       end = Sys.time()
       
-      # read in the data stored in the temporary source
-      df = read.table( paste0(source, "/site_",
-                               tail( unlist( strsplit( product, "[/]" ) ), n=1 ), "_gee_subset.csv" ), sep = ",", header = TRUE, stringsAsFactors = FALSE)
+      # read in the data stored in the temporary source this data comes
+      # in a long format (stacked by product) and has a single pixel location
+      # for now
+      df <- read.table(
+        paste0(source, "/site_",
+         tail( unlist( strsplit( product, "[/]" ) ), n=1 ), "_gee_subset.csv" ),
+          sep = ",", header = TRUE, stringsAsFactors = FALSE)
       
       location <- c(.$lon, .$lat)
       
@@ -56,8 +63,12 @@ collect_ancillary_data <- function(
       arc <- raster::stack(list.files("...", "*.nc", full.names = TRUE))
       arc_values <- raster::extract(arc, location)
       
+      # return dataframe
+      data.frame(
+        
+      )
+      
     })
   
   return(df)
-  
 }
