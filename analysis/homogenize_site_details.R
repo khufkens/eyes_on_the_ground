@@ -1,11 +1,24 @@
-# Homogenize field campaign data
+# Homogenize and anonymize 
+# messy field campaign data
+# only relevant fields are retained
+
+# load libraries + scripts
 library(tidyverse)
 library(rnaturalearth)
 library(sf)
-
 source("R/extract_spatial_info.R")
 
-# read in site details
+# grab crop cut data
+source("analysis/combine_crop_cut_data.R")
+df <- df %>%
+  mutate(
+    site_id = as.numeric(site_id)
+  ) %>%
+  select(
+    -crop_type
+  )
+
+# read in site details from excel sheets
 site_details_sr <- readxl::read_xlsx("/backup/see_it_grow/SR2020/Reports/SR2020_SiteDetails_3-5-2021.xlsx")
 site_details_lr <- readxl::read_xlsx("/backup/see_it_grow/LR2020/Reports/LR2020_SiteDetails_2021-05-03T04_47_08.770Z.xlsx")
 site_details_lr21 <- readxl::read_xlsx("/backup/see_it_grow/LR2021/Reports/SeeItGrow_LR2021.xlsx", sheet = "SiteDetails")
@@ -64,9 +77,9 @@ site_details_sr <- site_details_sr %>%
     latitude,
     longitude,
     #createdon,
-    seasoncode
-    #initial_image_path,
-    #approve_comment
+    seasoncode,
+    initial_image_path,
+    approve_comment
   )
 
 site_details_lr <- site_details_lr %>%
@@ -77,15 +90,17 @@ site_details_lr <- site_details_lr %>%
     sowing_date,
     expected_yield,
     latitude,
-    longitude
+    longitude,
     #createddate,
-    #initial_imagepath,
-    #approve_comment
+    initial_imagepath,
+    approve_comment
   ) %>%
   mutate(
-    seasoncode = "LR2020"
+    seasoncode = "LR2020",
     #createdon = createddate
-    #initial_image_path = initial_imagepath
+  ) %>%
+  rename(
+    initial_image_path = initial_imagepath
   )
 
 site_details_lr21 <- site_details_lr21 %>%
@@ -98,9 +113,9 @@ site_details_lr21 <- site_details_lr21 %>%
     latitude,
     longitude,
     #createdon,
-    seasoncode
-    #initial_image_path,
-    #approve_comment
+    seasoncode,
+    initial_image_path,
+    approve_comment
   )
 
 # fix dates and column names
@@ -110,16 +125,29 @@ site_details <- bind_rows(site_details, site_details_lr21) %>%
     !is.na(farmer_unique_id)
   ) %>%
   mutate(
-    crop_name = ifelse(crop_name == "green grams", "green gram", crop_name)
+    crop_name = ifelse(
+      crop_name == "green grams",
+      "green gram",
+      crop_name
+      ),
+    crop_name = ifelse(
+      crop_name == "beans",
+      "soybean",
+      crop_name
+    )
   ) %>%
   rename(
     lon = longitude,
     lat = latitude,
-    season_code = seasoncode
+    season_code = seasoncode,
+    filename = initial_image_path
   ) %>%
   mutate(
     lat = as.numeric(lat),
-    lon = as.numeric(lon)
+    lon = as.numeric(lon),
+    lat_orig = lat,
+    lon_orig = lon,
+    filename = basename(filename)
   ) %>%
   filter(
     lat < 7 # filter demo values etc
@@ -132,21 +160,35 @@ site_details <- pbi_map_gadm(
   country = "KEN"
 )
 
-# visualize stuff
-p <-ggplot(site_details) +
-  geom_point(
-    aes(
-      lon,
-      lat,
-      colour = season_code
-    )
-  )
+# merge general site details with crop cutting data
+site_details <- left_join(site_details, df)
 
-print(p)
+# write a file containing the original coordinates
+# and a date range to use for extraction of
+# remote sensing data
 
 # write to file
 write.table(
-  site_details,
+  site_details %>%
+    select(-lon, -lat) %>%
+    rename(
+      lat = lat_orig,
+      lon = lon_orig
+    ) %>%
+    mutate(
+      start_date = "2020-01-01",
+      end_date = "2021-12-31"
+    ),
+  "/scratch/LACUNA/data_product/remote_sensing_data/site_list.csv",
+  quote = FALSE,
+  row.names = FALSE,
+  col.names = TRUE,
+  sep = ","
+)
+
+# write to file
+write.table(
+  site_details %>% select(-lon_orig, -lat_orig, -approve_comment),
   "/scratch/LACUNA/data_product/meta-data/site_specifications.csv",
   quote = FALSE,
   row.names = FALSE,

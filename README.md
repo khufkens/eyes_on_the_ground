@@ -29,3 +29,5 @@ This project is a collaboration between the Lacuna Fund, ACRE Africa, IFPRI, CGI
 - Ceballos F., Kramer B., Robles M. The feasibility of picture-based insurance (PBI): Smartphone pictures for affordable crop insurance. (2019) Development Engineering, 4, 100042. ([PDF](https://www.sciencedirect.com/science/article/pii/S2352728518300812))
 
 - Hufkens K, Melaas EK, Mann ML, Foster T, Ceballos F, Robles M, Kramer B. Monitoring crop phenology using a smartphone based near-surface remote sensing approach. (2018) Agricultural and Forest Meteorology, 265, 327–337. ([PDF](https://www.sciencedirect.com/science/article/pii/S0168192318303484))
+
+- https://gitlab.com/ACRE_Africa/pbi-image-processing/-/tree/Akanodia-main-patch-30123

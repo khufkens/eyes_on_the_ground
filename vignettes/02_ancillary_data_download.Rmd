@@ -11,7 +11,7 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-The EotG project provides ancillary data for a limited number of data products most relevant within the context of machine learning and/or index based insurance in relation to the acquired crop images. Depending on the data product different approaches are required, depending on API based queries at point locations or prior bulk downloads of datasets (for subsequent subsetting). 
+The EotG project provides ancillary data for a limited number of data products most relevant within the context of machine learning and/or index based insurance in relation to the acquired crop images. Depending on the data product different approaches are required, depending on API based queries at point locations or prior bulk downloads of datasets (for subsequent subsetting).
 
 In this data product we'll provide ancillary data for the following data products:
 

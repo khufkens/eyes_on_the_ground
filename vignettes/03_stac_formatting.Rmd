@@ -11,4 +11,29 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-![](stac_diagram.svg)
+Labels provided for the STAC machine learning catalogs are sourced from two 'locations'. First, there are the raw labels as assigned by agronomists to two seasons of images acquired during the EotG project. Second, there are the labels generated using machine learning algorithms based upon the first set for the remainder of the data provided. 
+
+Labels are provided for instances of:
+
+- Growth stages
+  - sowing to germination
+  - early to late vegetative growth
+  - flowering
+  - early to late maturity
+
+- rainfall damage
+  - drought
+  - no damage
+  - excess rainfall
+
+- extent of damage
+  - a percentage
+  
+Data screening of initial labels (and hence model results) shows some very small images which are generally ignored and not included in the final dataset. After screening we retained XYZ of the XYZ collected images. Only Maize images were processed and modelled due to data limitations on other crop types (i.e. Green Gram, Soybeans and Sorghum).
+
+Both the model and labels are provided separately in:
+https://gitlab.com/ACRE_Africa/pbi-image-processing/-/tree/Akanodia-main-patch-30123
+
+## STAC structure
+
+Maize images and labelled data (as well as meta-data and climate drivers) are provided as a STAC catalogue and collections.

@@ -98,12 +98,3 @@ df <- df %>%
     dry_weight_kgs,
     total_production_kgs
   )
-
-write.table(
-  df,
-  "/scratch/LACUNA/data_product/meta-data/crop_cutting_data.csv",
-  quote = FALSE,
-  row.names = FALSE,
-  col.names = TRUE,
-  sep = ","
-)
