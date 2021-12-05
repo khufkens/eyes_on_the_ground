@@ -4,6 +4,27 @@
 
 # load in libraries
 library(tidyverse)
+source("analysis/homogenize_site_details.R")
+
+# only retain site details
+# wrt the filename, unique id and site id
+site_details <- site_details %>%
+  select(
+    farmer_unique_id,
+    site_id,
+    filename,
+    date,
+    approve_comment
+  ) %>%
+  rename(
+    farmer_id = farmer_unique_id
+  ) %>%
+  filter(
+    grepl('accepted', approve_comment)
+  ) %>%
+  select(
+    -approve_comment
+  )
 
 # base path
 path <- "/backup/see_it_grow"
@@ -91,6 +112,7 @@ images_lr21 <- images_lr21 %>%
 # bind files
 images <- bind_rows(images_sr, images_lr)
 images <- bind_rows(images, images_lr21)
+images <- bind_rows(images, site_details)
 
 # get date range
 images <- images %>%
@@ -99,57 +121,10 @@ images <- images %>%
     first_image = min(date),
     last_image = max(date)
   )
-  
-# Add ML labels (model based)
-drought <- read_csv("python/ml_labels/ml/DR_NoDR_Results.csv") %>%
-  rename(
-    'filename' = 'Old_name',
-    'drought_prob' = 'Drought',
-    'drought_model' = 'Model'
-  ) %>%
-  select(-New_name, -No_Drought, -'...1')
-
-images <- left_join(images, drought, by = 'filename')
-
-growth <- read_csv("python/ml_labels/ml/Growth_Stage_Results.csv") %>%
-  rename(
-    'filename' = 'Old_name',
-    'growth_sowing_prob' = 'Sowing',
-    'growth_vegetative_prob' = 'Vegetative',
-    'growth_flowering_prob' = 'Flowering',
-    'growth_maturity_prob' = 'Maturity',
-    'growth_model' = 'Model'
-  ) %>%
-  select(-New_name, -'...1')
-
-images <- left_join(images, growth, by = 'filename')
-
-drought_ext <- read_csv("python/ml_labels/ml/Drought_Extent_results.csv") %>%
-  rename(
-    'filename' = 'Old_name',
-    'drought_extent_prob' = 'Extent',
-    'drought_extent_model' = 'Model'
-  ) %>%
-  select(-New_name, -'...1')
-
-images <- left_join(images, drought_ext, by = 'filename')
-
-multi <- read_csv("python/ml_labels/ml/Multiclasss_Classification_results.csv") %>%
-  rename(
-    'filename' = 'Old_name',
-    'multi_good_prob' = 'Good',
-    'multi_weed_prob' = 'Weed',
-    'multi_drought_prob' = 'Drought',
-    'multi_nutrient_prob' = 'Nutri. Def.',
-    'multi_model' = 'Model'
-  ) %>%
-  select(-New_name, -'...1')
-
-images <- left_join(images, multi, by = 'filename')
 
 # add manual screening labels
-manual_sr <- read_csv("python/ml_labels/manual/ACRE_SR_final_csv.csv")
-manual_lr <- read_csv("python/ml_labels/manual/ACRE_LR_final_csv.csv")
+manual_sr <- read_csv("data/ml_labels/manual/ACRE_SR_final_csv.csv")
+manual_lr <- read_csv("data/ml_labels/manual/ACRE_LR_final_csv.csv")
 manual <- bind_rows(manual_sr, manual_lr) %>%
   rename_all(~ tolower(.)) %>%
   rename(
@@ -164,5 +139,14 @@ manual <- bind_rows(manual_sr, manual_lr) %>%
 
 # merge manual labels
 images <- left_join(images, manual)
+
+# merge machine learning labels
+source("analysis/combine_ml_labels.R")
+images <- left_join(images, df, by = "filename")
+
+# subset only 2020 seasons
+images <- images %>%
+  filter(season != "LR2021")
+
 
 

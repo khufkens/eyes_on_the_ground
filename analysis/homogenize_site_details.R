@@ -76,7 +76,7 @@ site_details_sr <- site_details_sr %>%
     expected_yield,
     latitude,
     longitude,
-    #createdon,
+    createdon,
     seasoncode,
     initial_image_path,
     approve_comment
@@ -91,13 +91,13 @@ site_details_lr <- site_details_lr %>%
     expected_yield,
     latitude,
     longitude,
-    #createddate,
+    createddate,
     initial_imagepath,
     approve_comment
   ) %>%
   mutate(
     seasoncode = "LR2020",
-    #createdon = createddate
+    createdon = createddate
   ) %>%
   rename(
     initial_image_path = initial_imagepath
@@ -112,7 +112,7 @@ site_details_lr21 <- site_details_lr21 %>%
     expected_yield,
     latitude,
     longitude,
-    #createdon,
+    createdon,
     seasoncode,
     initial_image_path,
     approve_comment
@@ -140,7 +140,8 @@ site_details <- bind_rows(site_details, site_details_lr21) %>%
     lon = longitude,
     lat = latitude,
     season_code = seasoncode,
-    filename = initial_image_path
+    filename = initial_image_path,
+    date = createdon
   ) %>%
   mutate(
     lat = as.numeric(lat),
