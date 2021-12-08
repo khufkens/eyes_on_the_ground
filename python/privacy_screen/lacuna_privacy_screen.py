@@ -154,7 +154,7 @@ def label_image(file):
      # If the image is a field or similar evaluate
      # it for the presence of persons / faces
      #if top_preds[0] in acceptable_classes:
-     if True:
+     if True: # FIX LOGIC
       field = "yes"
       people = "NA"
         
@@ -199,7 +199,8 @@ def label_image(file):
       'class' : classes[top_preds[0]]
       }
 
-     # TODO write file to disk
+     # write file to disk
+
 
      return(results)
 
@@ -242,14 +243,15 @@ if __name__ == '__main__':
     face_detector = MTCNN()
     
     # create empty output dataframe
-    results = pd.DataFrame(columns=['field','accuracy'])
+    results = pd.DataFrame(columns=['field','accuracy','file','people','class'])
 
     # iterate over all images and label them
-    for i, file in enumerate(files[0:100]):
+    for i, file in enumerate(files):
      
      tmp = label_image(file)
      results = results.append(
        tmp,
        ignore_index=True)
-       
-    print(results)
+
+    # save results to file   
+    results.to_csv(os.path.join(args.output_directory, 'privacy_screen.csv'))
