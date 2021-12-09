@@ -37,7 +37,7 @@ pbi_map_gadm <- function(
   # download GADM data
   gadm <- raster::getData('GADM',
                           country = country,
-                          level = 3,
+                          level = 2,
                           path = tempdir()
                           )
   
@@ -70,11 +70,11 @@ pbi_map_gadm <- function(
   
   # merge with data frame and drop points without an overlap
   df <- data.frame(df,
-                   spatial_location = gadm$NAME_3,
-                   spatial_unit = "gadm",
+                   spatial_location = gadm$NAME_2,
+                   spatial_unit = "gadm36",
                    bbox,
                    stringsAsFactors = FALSE)
-  df <- df[!is.na(df$spatial_location),]
+  #df <- df[!is.na(df$spatial_location),]
   
   return(df)
 }

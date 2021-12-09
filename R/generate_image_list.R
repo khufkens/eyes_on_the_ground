@@ -40,6 +40,9 @@ generate_image_list <- function(
     ) %>%
     select(
       -approve_comment
+    ) %>%
+    mutate(
+      date = as.character(date)
     )
 
   # read in site data
@@ -76,7 +79,7 @@ generate_image_list <- function(
       filename
     ) %>%
     mutate(
-      date = as.Date(date),
+      date = as.character(date),
       season = "SR2020"
     )
   
@@ -97,7 +100,7 @@ generate_image_list <- function(
       filename
     ) %>%
     mutate(
-      date = as.Date(date),
+      date = as.character(date),
       season = "LR2020"
     )
   
@@ -118,7 +121,7 @@ generate_image_list <- function(
       filename
     ) %>%
     mutate(
-      date = as.Date(date),
+      date = as.character(date),
       season = "LR2021"
     )
   
@@ -164,8 +167,13 @@ generate_image_list <- function(
   
   # subset only 2020 seasons
   images <- images %>%
-    filter(season != season_filter)
-  
+    filter(season != season_filter) %>%
+    mutate(
+      date = format(
+        strptime(date, "%Y-%m-%d %H:%M:%S", tz = "EAT"),
+        tz = "UTC"
+        )
+    )
   
   if(!missing(path)){
     # output data

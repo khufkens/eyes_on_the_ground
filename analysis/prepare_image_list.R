@@ -22,6 +22,12 @@ site_info <- site_details() %>%
     -date
   )
 
+site_info <- site_info %>%
+  mutate(
+    spatial_location = gsub("/","_", spatial_location),
+    spatial_location = gsub(" ","-", spatial_location)
+  )
+
 # image list for stac formatting
 write.table(
   site_info,
@@ -37,11 +43,17 @@ site_info <- site_info %>%
     farmer_unique_id,
     site_id,
     crop_name,
+    spatial_location,
     xmin,xmax,
     ymin,ymax
   )
 
-images <- left_join(images, site_info)
+# remove files with no corresponding site_info
+# this shouldn't happen but it is the data provided
+images <- left_join(images, site_info) %>%
+  filter(
+    !is.na(spatial_location)
+  )
 
 # image list for stac formatting
 write.table(
@@ -107,6 +119,3 @@ images %>%
       pretty = FALSE
     )
   })
-
-message("Do visual screening of data !!")
-message("Update image list afterwards")

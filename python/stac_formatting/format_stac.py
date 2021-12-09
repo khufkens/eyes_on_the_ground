@@ -16,7 +16,7 @@ import geojson
 
 # use pandas data frames
 df = pd.read_csv("/scratch/LACUNA/staging_data/image_list.csv")
-df = df[0:100]
+df = df[0:200]
 
 # 2. extract and set some of the overall catalog details, this includes
 # a title and an elaborate description, as well as temporal and 
@@ -51,128 +51,6 @@ spatial_extent = pystac.SpatialExtent([bbox_cat])
 temporal_extent = pystac.TemporalExtent([[start_date, end_date]])
 catalog_extent = pystac.Extent(spatial_extent, temporal_extent)
 
-
-# create containing collection
-collection_id = 'EotG_collection_v2'
-collection = pystac.Collection(
-    id = collection_id,
-    description = 'image data',
-    extent = pystac.SpatialExtent([[-180, -90, 180, 90]]),
-    keywords = ['machine learning','crop monitoring','validation','remote sensing'],
-    license = 'CC-BY-SA-4.0'
-    )
-
-
-# 3. loop over all rows of the pandas
-# data frame and populate the STAC
-# items.
-
-# empty list to store STAC items
-stac_items = []
-
-for index, row in df.iterrows():
-
-    left = row['xmin']
-    bottom = row['ymin']
-    right = row['xmax']
-    top = row['ymax']
-
-    # set general bounding box
-    bbox = [left, bottom, right, top]
-    
-    # grab time, format correctly
-    time_acquired = datetime.strptime(row['date'], '%Y-%m-%d')
-
-    # unique image id based on unique filename
-    id = "img_" + os.path.splitext(row['filename'])[0]
-    
-    # Create geojson feature
-    geom = geojson.Polygon([
-        [left, bottom],
-        [left, top],
-        [right, top],
-        [right, bottom]
-    ])
-
-    # Instantiate pystac item
-    item = pystac.Item(
-                id = id,
-                geometry = geom,
-                bbox = bbox,
-                datetime = time_acquired,
-                collection = collection_id,
-                properties = {}
-                )
-
-#"links": [
-#  { "rel": "collection", "href": "link/to/collection/record.json" }
-#]
-
-    # format image path relative to the stack index
-    image_link = "/images/" + row['filename']
-    thumb_link = "/thumbs/" + row['filename']
-    label_link = "/labels/" + os.path.splitext(row['filename'])[0] + ".json"
-    metadata_link = "/ancillary_data/site_info/" + row['farmer_unique_id'] + "_" + str(row['site_id']) + "_site_info.json"
-
-    # link to the image data
-    item.add_asset(
-            key = 'image',
-            asset = pystac.Asset(
-                href = image_link,
-                title= "3 band RGB",
-                media_type = pystac.MediaType.JPEG,
-                roles = ([
-                 "data"
-                ])
-            )
-    ) 
-    
-    # link to the machine learning labels
-    item.add_asset(
-            key = 'label',
-            asset = pystac.Asset(
-                href = image_link,
-                title= "ML labels",
-                media_type = "application/json",
-                roles = ([
-                 "data"
-                ])
-            )
-    )
-    
-    # link to the thumbnails
-    item.add_asset(
-            key = 'thumbnail',
-            asset = pystac.Asset(
-                href = thumb_link,
-                title= "thumbnail",
-                media_type = pystac.MediaType.JPEG,
-                roles = ([
-                 "thumbnail"
-                ])
-            )
-    )
-
-    # link to the site based meta-data
-    item.add_asset(
-            key = 'metadata',
-            asset = pystac.Asset(
-                href = metadata_link,
-                title= "site meta-data",
-                media_type = "application/json",
-                roles = ([
-                 "metadata"
-                ])
-            )
-    )
-
-    # append item to stac item list
-    # for this iteration
-    stac_items.append(item)
-
-# add all items to the collection
-collection.add_items(stac_items)
-
 # create a base catalog to hold
 # all collections / items
 # fill with details as calculated
@@ -188,7 +66,6 @@ catalog = pystac.Catalog(
                         {
                         "name": "LACUNA fund",
                         "roles": ["producer","processor"],
-                        "description": "Our voice on data",
                         "url": "https://lacunafund.org/"
                         },
                         {
@@ -204,8 +81,176 @@ catalog = pystac.Catalog(
                     ]
         }
     )
-# add stuff to catalog and write to disk
-catalog.add_child(collection)
+
+title_cat_image = '''Eyes on the Ground Image data'''
+
+description_cat_image = '''
+ Picture based insurance images, sorted by administrative region
+ '''
+
+image_catalog = pystac.Catalog(
+    id = 'EotG_images',
+    title = title_cat_image,
+    description = description_cat_image,
+    extra_fields = {
+        "license" : "CC-BY-SA-4.0",
+        "extent": catalog_extent.to_dict(),
+        "providers": [
+                        {
+                        "name": "LACUNA fund",
+                        "roles": ["producer","processor"],
+                        "url": "https://lacunafund.org/"
+                        },
+                        {
+                        "name": "International Food Policy Research Institute",
+                        "roles": ["producer","processor"],
+                        "url": "http://ifpri.org"
+                        },
+                        {
+                        "name": "BlueGreen Labs (bv)",
+                        "roles": ["processor"],
+                        "url": "http://bluegreenlabs.org"
+                        },
+                    ]
+        }
+    )
+
+# create containing collection
+image_collection = pystac.Collection(
+    id = 'EotG_images',
+    description = 'image data',
+    extent = catalog_extent, #pystac.SpatialExtent([[left, bottom, right, top]]),
+    keywords = ['machine learning','crop monitoring','validation','remote sensing'],
+    license = 'CC-BY-SA-4.0'
+)
+
+grouped_obj = df.groupby(["spatial_location"])
+for key, subset in grouped_obj:
+    print("Key is: " + str(key))
+
+    # create containing collection
+    collection_id = str(key)
+
+    # define collection
+    collection = pystac.Collection(
+        id = collection_id,
+        description = 'image data',
+        extent = pystac.SpatialExtent([[-180, -90, 180, 90]]),
+        keywords = ['machine learning','crop monitoring','validation','remote sensing'],
+        license = 'CC-BY-SA-4.0'
+    )
+
+    # 3. loop over all rows of the pandas
+    # data frame and populate the STAC
+    # items.
+
+    # empty list to store STAC items
+    stac_items = []
+
+    for index, row in subset.iterrows():
+
+        left = row['xmin']
+        bottom = row['ymin']
+        right = row['xmax']
+        top = row['ymax']
+
+        # set general bounding box
+        bbox = [left, bottom, right, top]
+        
+        # grab time, format correctly
+        time_acquired = datetime.strptime(row['date'], '%Y-%m-%d')
+
+        # unique image id based on unique filename
+        id = "img_" + os.path.splitext(row['filename'])[0]
+        
+        # Create geojson feature
+        geom = geojson.Polygon([
+            [left, bottom],
+            [left, top],
+            [right, top],
+            [right, bottom]
+        ])
+
+        # Instantiate pystac item
+        item = pystac.Item(
+                    id = id,
+                    geometry = geom,
+                    bbox = bbox,
+                    datetime = time_acquired,
+                    collection = collection_id,
+                    properties = {}
+                    )
+
+        # format image path relative to the stack index
+        image_link = "/images/" + row['filename']
+        thumb_link = "/thumbs/" + row['filename']
+        label_link = "/labels/" + os.path.splitext(row['filename'])[0] + ".json"
+        metadata_link = "/ancillary_data/site_info/" + row['farmer_unique_id'] + "_" + str(row['site_id']) + "_site_info.json"
+
+        # link to the image data
+        item.add_asset(
+                key = 'image',
+                asset = pystac.Asset(
+                    href = image_link,
+                    title= "3 band RGB",
+                    media_type = pystac.MediaType.JPEG,
+                    roles = ([
+                    "data"
+                    ])
+                )
+        ) 
+        
+        # link to the machine learning labels
+        item.add_asset(
+                key = 'label',
+                asset = pystac.Asset(
+                    href = image_link,
+                    title= "ML labels",
+                    media_type = "application/json",
+                    roles = ([
+                    "data"
+                    ])
+                )
+        )
+        
+        # link to the thumbnails
+        item.add_asset(
+                key = 'thumbnail',
+                asset = pystac.Asset(
+                    href = thumb_link,
+                    title= "thumbnail",
+                    media_type = pystac.MediaType.JPEG,
+                    roles = ([
+                    "thumbnail"
+                    ])
+                )
+        )
+
+        # link to the site based meta-data
+        item.add_asset(
+                key = 'metadata',
+                asset = pystac.Asset(
+                    href = metadata_link,
+                    title= "site meta-data",
+                    media_type = "application/json",
+                    roles = ([
+                    "metadata"
+                    ])
+                )
+        )
+
+        # append item to stac item list
+        # for this iteration
+        stac_items.append(item)
+
+    # add all items to the collection
+    collection.add_items(stac_items)
+    
+    # add stuff to catalog and write to disk
+    image_collection.add_child(collection)
+
+
+catalog.add_child(image_collection)
 catalog.describe()
 catalog.normalize_hrefs('/scratch/LACUNA/data_product/')
 #print(catalog.get_self_href())
