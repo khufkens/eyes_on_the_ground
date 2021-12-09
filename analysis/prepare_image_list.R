@@ -36,6 +36,7 @@ site_info <- site_info %>%
   select(
     farmer_unique_id,
     site_id,
+    crop_name,
     xmin,xmax,
     ymin,ymax
   )
@@ -53,15 +54,10 @@ write.table(
 )
 
 # list all files
-files_lr2020 <- list.files(
-  "/backup/see_it_grow/LR2020/","*.jpg|*.JPG",
+files <- list.files(
+  "/scratch/LACUNA/staging_data/images/","*.jpg|*.JPG",
   recursive = TRUE,
   full.names = TRUE)
-files_sr2020 <- list.files(
-  "/backup/see_it_grow/SR2020/","*.jpg|*.JPG",
-  recursive = TRUE,
-  full.names = TRUE)
-files <- c(files_lr2020, files_sr2020)
 
 files <- data.frame(file_path = files)
 files <- files %>%
@@ -81,31 +77,36 @@ images <- images %>%
 images %>%
   rowwise() %>%
   do({
-
-      # copy image file to destination
-      file.copy(
-        .$file_path,
-        file.path("/scratch/LACUNA/data_product/images/", .$filename)
-        )
-
-      # remove some extra data
-      x <- as.data.frame(.)
-      x <- x %>%
-        select(
-          -first_image,
-          -last_image,
-          -xmin, -xmax, -ymin, -ymax,
-          -file_path
-        )
-
-      # json filename
-      json_file <- paste0(tools::file_path_sans_ext(.$filename),".json")
-
-      # write json label file
-      jsonlite::write_json(
-        x,
-        path = file.path("/scratch/LACUNA/data_product/labels/", json_file),
-        pretty = FALSE
+    
+    img_file <- file.path(
+      "/scratch/LACUNA/data_product/images/", .$filename)
+    
+    # json filename
+    json_file <- paste0(tools::file_path_sans_ext(.$filename),".json")
+    
+    # copy image file to destination
+    file.copy(
+      .$file_path,
+      img_file
+    )
+    
+    # remove some extra data
+    x <- as.data.frame(.)
+    x <- x %>%
+      select(
+        -first_image,
+        -last_image,
+        -xmin, -xmax, -ymin, -ymax,
+        -file_path
       )
+    
+    # write json label file
+    jsonlite::write_json(
+      x,
+      path = file.path("/scratch/LACUNA/data_product/labels/", json_file),
+      pretty = FALSE
+    )
   })
 
+message("Do visual screening of data !!")
+message("Update image list afterwards")

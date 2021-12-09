@@ -38,6 +38,31 @@ sites <- sites %>%
     site_name = paste(farmer_unique_id, site_id)
   )
 
+sites %>%
+  select(
+    -site_name
+  ) %>%
+  group_by(farmer_unique_id, site_id) %>%
+  do({
+    
+    filename_site_info <- paste(
+      .$farmer_unique_id[1],
+      .$site_id[1],
+      "site_info.json",
+      sep = "_"
+    )
+    
+    jsonlite::write_json(
+      .,
+      path = file.path(
+        "/scratch/LACUNA/data_product/ancillary_data/site_info/",
+        filename_site_info),
+      pretty = FALSE
+    )
+    
+  })
+
+
 # merge all remote sensing data into one data frame
 # and limit data to june 2021
 df <- readRDS("/scratch/LACUNA/remote_sensing/gee_data.rds")
@@ -61,28 +86,6 @@ df %>%
     site_name <- paste(.$farmer_unique_id[1], .$site_id[1])
     
     if(any(site_name == sites$site_name)) {
-      
-      # write site_information to file
-      site_info <- sites %>%
-        filter(
-          site_name == site_name
-        ) %>%
-        select(
-          -site_name
-        )
-      
-      filename_site_info <- paste(
-        .$farmer_unique_id[1],
-        .$site_id[1],
-        "site_info.json",
-        sep = "_"
-      )
-      
-      jsonlite::write_json(
-        site_info,
-        path = file.path("/scratch/LACUNA/data_product/site_info/", filename_site_info),
-        pretty = FALSE
-      )
       
       if (grepl("ERA",.$product[1])){
 

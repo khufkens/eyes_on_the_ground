@@ -11,7 +11,7 @@ import pandas as pd
 
 # image processing
 from PIL import Image
-from cv2 import resize
+from cv2 import accumulateProduct, resize
 import cv2 as cv
 
 # Deep learning models
@@ -133,28 +133,27 @@ def label_image(file):
      # alternatively the last layer is removed and the
      # model retrained, but this would require valid
      # training data.
-     
-     acceptable_classes = [
+
+     acceptable_class_loc = [
      36, 30, 48, 62, 110,
      116,117, 138, 145,
-     104, # corn field
-     140,141,142,
+     104, 140,141,142,
      150, 151, 152,153,
      164, 173, 204, 205,
      209, 224, 229, 232,
      233, 234, 243, 249,
      254, 258, 265, 271,
-     287, # rice paddy
-     288, 323, 338, 341,
-     345, 349,
-     359, # wheat field
+     287, 288, 323, 338,
+     341, 345, 349, 359,
      362, 364
      ]
 
      # If the image is a field or similar evaluate
      # it for the presence of persons / faces
      #if top_preds[0] in acceptable_classes:
-     if True: # FIX LOGIC
+
+
+     if top_preds[0] in acceptable_class_loc:
       field = "yes"
       people = "NA"
         
