@@ -10,6 +10,8 @@ import argparse
 import json
 import geojson
 
+base_path = "https://raw.githubusercontent.com/khufkens/EotG_data/main/release_v1/"
+
 # 1. read in the generated overview files
 # which includes all required fields to
 # populate the stac items (generated in R - should move to python)
@@ -35,8 +37,10 @@ description_cat = '''
  as well as matching ancillary remote sensing and climate data.
  '''
 
-start_date = datetime.strptime(min(df['date']), '%Y-%m-%d')
-end_date = datetime.strptime(max(df['date']), '%Y-%m-%d')
+df.date = pd.to_datetime(df.date)
+
+start_date = min(df.date)
+end_date = max(df.date)
 
 left = min(df['xmin'])
 bottom = min(df['ymin'])
@@ -114,12 +118,12 @@ image_catalog = pystac.Catalog(
                     ]
         }
     )
-
-# create containing collection
+    
+# define collection
 image_collection = pystac.Collection(
-    id = 'EotG_images',
+    id = "image_collection",
     description = 'image data',
-    extent = catalog_extent, #pystac.SpatialExtent([[left, bottom, right, top]]),
+    extent = catalog_extent,
     keywords = ['machine learning','crop monitoring','validation','remote sensing'],
     license = 'CC-BY-SA-4.0'
 )
@@ -128,14 +132,32 @@ grouped_obj = df.groupby(["spatial_location"])
 for key, subset in grouped_obj:
     print("Key is: " + str(key))
 
-    # create containing collection
+    # set collection id
     collection_id = str(key)
+
+    # get extent
+    left = min(subset['xmin'])
+    bottom = min(subset['ymin'])
+    right = max(subset['xmax'])
+    top = max(subset['ymax'])
+
+    # set general bounding box
+    bbox_subset = [left, bottom, right, top]
+
+    # start and end dates
+    start_date = min(subset.date)
+    end_date = max(subset.date)
+
+    # convert extents
+    spatial_extent = pystac.SpatialExtent([bbox_subset])
+    temporal_extent = pystac.TemporalExtent([[start_date, end_date]])
+    collection_extent = pystac.Extent(spatial_extent, temporal_extent)
 
     # define collection
     collection = pystac.Collection(
         id = collection_id,
         description = 'image data',
-        extent = pystac.SpatialExtent([[-180, -90, 180, 90]]),
+        extent = collection_extent,
         keywords = ['machine learning','crop monitoring','validation','remote sensing'],
         license = 'CC-BY-SA-4.0'
     )
@@ -158,18 +180,29 @@ for key, subset in grouped_obj:
         bbox = [left, bottom, right, top]
         
         # grab time, format correctly
-        time_acquired = datetime.strptime(row['date'], '%Y-%m-%d')
+        time_acquired = row.date
 
         # unique image id based on unique filename
-        id = "img_" + os.path.splitext(row['filename'])[0]
-        
-        # Create geojson feature
-        geom = geojson.Polygon([
+        id = "img_" + os.path.splitext(row.filename)[0]
+ 
+        # need to make this a function at some point
+        # get extreme bounds
+        left = row['xmin']
+        bottom = row['ymin']
+        right = row['xmax']
+        top = row['ymax']
+    
+        # formulate in array
+        coordinates = [[
             [left, bottom],
             [left, top],
             [right, top],
-            [right, bottom]
-        ])
+            [right, bottom],
+            [left, bottom]
+        ]]
+
+        # return values
+        geom =  {'type': 'Polygon', 'coordinates': coordinates}
 
         # Instantiate pystac item
         item = pystac.Item(
@@ -182,10 +215,12 @@ for key, subset in grouped_obj:
                     )
 
         # format image path relative to the stack index
-        image_link = "/images/" + row['filename']
-        thumb_link = "/thumbs/" + row['filename']
-        label_link = "/labels/" + os.path.splitext(row['filename'])[0] + ".json"
-        metadata_link = "/ancillary_data/site_info/" + row['farmer_unique_id'] + "_" + str(row['site_id']) + "_site_info.json"
+        image_link = base_path + "images/" + row.filename
+        thumb_link = base_path + "thumbs/" + row.filename
+        label_link = base_path + "labels/" + os.path.splitext(row.filename)[0] + ".json"
+        metadata_link = base_path + "ancillary_data/site_info/" + row.farmer_unique_id + "_" + str(row.site_id) + "_site_info.json"
+        era5_link = base_path + "ancillary_data/site_info/" + row.farmer_unique_id + "_" + str(row.site_id) + "_site_info.json"
+        sentinel_link = base_path + "/ancillary_data/site_info/" + row.farmer_unique_id + "_" + str(row.site_id) + "_site_info.json"
 
         # link to the image data
         item.add_asset(
@@ -204,7 +239,7 @@ for key, subset in grouped_obj:
         item.add_asset(
                 key = 'label',
                 asset = pystac.Asset(
-                    href = image_link,
+                    href = label_link,
                     title= "ML labels",
                     media_type = "application/json",
                     roles = ([
@@ -227,17 +262,19 @@ for key, subset in grouped_obj:
         )
 
         # link to the site based meta-data
-        item.add_asset(
-                key = 'metadata',
-                asset = pystac.Asset(
-                    href = metadata_link,
-                    title= "site meta-data",
-                    media_type = "application/json",
-                    roles = ([
-                    "metadata"
-                    ])
-                )
-        )
+        #item.add_asset(
+        #        key = 'metadata',
+        #        asset = pystac.Asset(
+        #            href = metadata_link,
+        #            title= "site meta-data",
+        #            media_type = "application/json",
+        #            roles = ([
+        #            "metadata"
+        #            ])
+        #        )
+        #)
+
+        print(json.dumps(item.to_dict(), indent=4))
 
         # append item to stac item list
         # for this iteration
@@ -247,15 +284,19 @@ for key, subset in grouped_obj:
     collection.add_items(stac_items)
     
     # add stuff to catalog and write to disk
-    image_collection.add_child(collection)
+    #image_catalog.add_child(collection)
+    image_catalog.add_child(collection)
 
+catalog.add_child(image_catalog)
+#catalog.set_self_href("https://raw.githubusercontent.com/khufkens/eyes_on_the_ground/main/")
+#catalog.make_all_asset_hrefs_relative()
+catalog.normalize_hrefs("https://raw.githubusercontent.com/khufkens/EotG_data/main/release_v1/")
 
-catalog.add_child(image_collection)
+# describe and validate
 catalog.describe()
-catalog.normalize_hrefs('/scratch/LACUNA/data_product/')
-#print(catalog.get_self_href())
-#print(item.get_self_href())
+catalog.validate_all()
 
+# save
 catalog.save(
-    catalog_type = pystac.CatalogType.SELF_CONTAINED
+    catalog_type = pystac.CatalogType.RELATIVE_PUBLISHED
     )

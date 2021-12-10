@@ -55,16 +55,6 @@ images <- left_join(images, site_info) %>%
     !is.na(spatial_location)
   )
 
-# image list for stac formatting
-write.table(
-  images,
-  "/scratch/LACUNA/staging_data/image_list.csv",
-  row.names = FALSE,
-  quote = FALSE,
-  col.names = TRUE,
-  sep = ","
-)
-
 # list all files
 files <- list.files(
   "/scratch/LACUNA/staging_data/images/","*.jpg|*.JPG",
@@ -85,6 +75,16 @@ images <- images %>%
   filter(
     !is.na(file_path)
   )
+
+# image list for stac formatting
+write.table(
+  images,
+  "/scratch/LACUNA/staging_data/image_list.csv",
+  row.names = FALSE,
+  quote = FALSE,
+  col.names = TRUE,
+  sep = ","
+)
 
 images %>%
   rowwise() %>%
