@@ -27,15 +27,14 @@ df = df[0:200]
 title_cat = '''Eyes on the Ground'''
 
 description_cat = '''
- The 'Eyes on the Ground' project is a collaboration between IFPRI/CGIAR,
- the Lacuna Fund to create a large machine learning (ML) dataset of smallholder
- farmer's fields based upon previous work within the Picture Based Insurance 
- framework (Ceballos 2019).
- 
- Data provided in this dataset is extensively labelled for machine learning and 
- modelling purposes. The provided labels include growth stage, damage, damage extent
- as well as matching ancillary remote sensing and climate data.
- '''
+The "Eyes on the Ground" project ([lacunafund.org](https://lacunafund.org/ag2020awards/))
+is a collaboration between ACRE Africa, the International Food Policy Research Institute (IFPRI),
+and the Lacuna Fund, to create a large machine learning (ML) dataset of smallholder farmer's
+fields based upon previous work within the Picture Based Insurance framework
+(Ceballos, Kramer and Robles, 2019, [https://doi.org/10.1016/j.deveng.2019.100042](https://doi.org/10.1016/j.deveng.2019.100042)).
+This is a unique dataset of georeferenced crop images along with labels on input use,
+crop management, phenology, crop damage, and yields, collected across 8 counties in Kenya.
+'''
 
 df.date = pd.to_datetime(df.date)
 
@@ -204,6 +203,23 @@ for key, subset in grouped_obj:
         # return values
         geom =  {'type': 'Polygon', 'coordinates': coordinates}
 
+        # format image path relative to the stack index
+        image_link = base_path + "images/" + row.filename
+        thumb_link = base_path + "thumbs/" + row.filename
+        label_link = base_path + "labels/" + os.path.splitext(row.filename)[0] + ".json"
+        metadata_link = base_path + "ancillary_data/site_info/" + row.farmer_unique_id + "_" + str(row.site_id) + "_site_info.json"
+        era5_link = base_path + "ancillary_data/era5/" + row.farmer_unique_id + "_" + str(row.site_id) + "_ERA5.json"
+        sentinel_link = base_path + "/ancillary_data/sentinel/" + row.farmer_unique_id + "_" + str(row.site_id) + "_S2_R.json"
+        tamsat_link = base_path + "/ancillary_data/sentinel/" + row.farmer_unique_id + "_" + str(row.site_id) + "_TAMSAT.json"
+        arc_link = base_path + "/ancillary_data/sentinel/" + row.farmer_unique_id + "_" + str(row.site_id) + "_ARC.json"
+
+        # read in site meta data which will be provided in
+        # the properties tag
+        f = open("/scratch/LACUNA/data_product/" + "ancillary_data/site_info/" +
+             row.farmer_unique_id + "_" + str(row.site_id) + "_site_info.json")
+        metadata = json.load(f)[0]
+        f.close()
+
         # Instantiate pystac item
         item = pystac.Item(
                     id = id,
@@ -211,16 +227,8 @@ for key, subset in grouped_obj:
                     bbox = bbox,
                     datetime = time_acquired,
                     collection = collection_id,
-                    properties = {}
+                    properties = metadata
                     )
-
-        # format image path relative to the stack index
-        image_link = base_path + "images/" + row.filename
-        thumb_link = base_path + "thumbs/" + row.filename
-        label_link = base_path + "labels/" + os.path.splitext(row.filename)[0] + ".json"
-        metadata_link = base_path + "ancillary_data/site_info/" + row.farmer_unique_id + "_" + str(row.site_id) + "_site_info.json"
-        era5_link = base_path + "ancillary_data/site_info/" + row.farmer_unique_id + "_" + str(row.site_id) + "_site_info.json"
-        sentinel_link = base_path + "/ancillary_data/site_info/" + row.farmer_unique_id + "_" + str(row.site_id) + "_site_info.json"
 
         # link to the image data
         item.add_asset(
@@ -262,19 +270,56 @@ for key, subset in grouped_obj:
         )
 
         # link to the site based meta-data
-        #item.add_asset(
-        #        key = 'metadata',
-        #        asset = pystac.Asset(
-        #            href = metadata_link,
-        #            title= "site meta-data",
-        #            media_type = "application/json",
-        #            roles = ([
-        #            "metadata"
-        #            ])
-        #        )
-        #)
+        item.add_asset(
+                key = 'sentinel',
+                asset = pystac.Asset(
+                    href = sentinel_link,
+                    title= "Sentinel remote sensing data",
+                    media_type = "application/json",
+                    roles = ([
+                    "data"
+                    ])
+                )
+        )
 
-        print(json.dumps(item.to_dict(), indent=4))
+        # link to the site based meta-data
+        item.add_asset(
+                key = 'ERA5',
+                asset = pystac.Asset(
+                    href = era5_link,
+                    title= "ERA5 climate data",
+                    media_type = "application/json",
+                    roles = ([
+                    "data"
+                    ])
+                )
+        )
+
+        # link to the site based meta-data
+        item.add_asset(
+                key = 'ARC',
+                asset = pystac.Asset(
+                    href = arc_link,
+                    title= "ARC precipitation estimates",
+                    media_type = "application/json",
+                    roles = ([
+                    "data"
+                    ])
+                )
+        )
+
+        # link to the site based meta-data
+        item.add_asset(
+                key = 'TAMSAT',
+                asset = pystac.Asset(
+                    href = tamsat_link,
+                    title= "TAMSAT precipitation estimates",
+                    media_type = "application/json",
+                    roles = ([
+                    "data"
+                    ])
+                )
+        )
 
         # append item to stac item list
         # for this iteration
