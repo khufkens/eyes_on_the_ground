@@ -111,12 +111,46 @@
 
     
     
-<p><img src="stac_diagram.svg"></p>
+<p>Labels provided for the STAC machine learning catalogs are sourced from two ‘locations’. First, there are the raw labels as assigned by agronomists to two seasons of images acquired during the EotG project. Second, there are the labels generated using machine learning algorithms based upon the first set for the remainder of the data provided.</p>
+<p>Data screening of initial labels (and hence model results) shows some very small images which are generally ignored and not included in the final dataset. After screening we retained ~17K images.</p>
+<p>Labels are provided for instances of:</p>
+<ul>
+<li>Growth stages
+<ul>
+<li>sowing to germination</li>
+<li>early to late vegetative growth</li>
+<li>flowering</li>
+<li>early to late maturity</li>
+</ul>
+</li>
+<li>rainfall damage
+<ul>
+<li>drought</li>
+<li>no damage</li>
+<li>excess rainfall</li>
+</ul>
+</li>
+<li>extent of damage
+<ul>
+<li>a percentage</li>
+</ul>
+</li>
+</ul>
+<p>Ancillary data are provided as zipped json files. Ancillary data is not image specific and covers the whole season associated with an image.</p>
+<div id="stac-structure" class="section level2">
+<h2 class="hasAnchor">
+<a href="#stac-structure" class="anchor"></a>STAC structure</h2>
+<p>A visual preview of the github hosted STAC catolog can be found here:</p>
+<p><a href="https://radiantearth.github.io/stac-browser/#/external/raw.githubusercontent.com/khufkens/EotG_data/main/release_v1/catalog.json" class="uri">https://radiantearth.github.io/stac-browser/#/external/raw.githubusercontent.com/khufkens/EotG_data/main/release_v1/catalog.json</a></p>
+<p>These data are cleared for use, however we forsee further integration in the Radiant Earth Machine Learning hub (MLhub), data will migrate there once full compliance is assured with the Radiant Earth in house STAC specifications.</p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 

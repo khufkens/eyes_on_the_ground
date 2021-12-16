@@ -174,10 +174,10 @@
 <div id="batch-downloads-for-farmer-field-locations" class="section level3">
 <h3 class="hasAnchor">
 <a href="#batch-downloads-for-farmer-field-locations" class="anchor"></a>Batch downloads for farmer field locations</h3>
-<p>The above script only queries a single location for a given date range. The processing of the complete dataset of all field locations requires us to loop over all these locations. In order to make this processing easy, and at the same time integrate the downloaded TAMSAT and ARC data in a single file an <code>R</code> script, <code><a href="../reference/collect_ancillary_data.html">collect_ancillary_data()</a></code>, is provided (see R/ folder).</p>
+<p>The above script only queries a single location for a given date range. The processing of the complete dataset of all field locations requires us to loop over all these locations. In order to make this processing easy, and at the same time integrate the downloaded TAMSAT and ARC data in a single file an <code>R</code> script, <code>collect_ancillary_data()</code>, is provided (see R/ folder).</p>
 <p>The script takes a dataframe (df) with coordinates of unique fields and downloads the required data via the GEE API. In one pass it also subsets the previously downloaded (see above). As such you need to specify a source directory where to find the downloaded files.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/collect_ancillary_data.html">collect_ancillary_data</a></span><span class="op">(</span>
+<code class="sourceCode R"><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">collect_ancillary_data</span><span class="op">(</span>
   df <span class="op">=</span> <span class="va">df</span>,
   source <span class="op">=</span> <span class="st">"/your/data/archive"</span>,
   dest <span class="op">=</span> <span class="st">"/final/data/product"</span>

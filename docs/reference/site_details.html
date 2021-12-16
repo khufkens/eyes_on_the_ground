@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • EotG</title>
+<title>Collect site details — site_details • EotG</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -47,7 +47,11 @@
 <!-- ropensci -->
 <link href="../bglabs.css" rel="stylesheet">
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Collect site details — site_details" />
+<meta property="og:description" content="Function to process ancillary data
+into a tidy data frame, this includes
+soil types, yields etc." />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -57,7 +61,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -136,84 +140,41 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Collect site details</h1>
+    <small class="dont-index">Source: <a href='https://github.com/khufkens/eyes_on_the_ground/blob/master/R/site_details.R'><code>R/site_details.R</code></a></small>
+    <div class="hidden name"><code>site_details.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Function to process ancillary data
+into a tidy data frame, this includes
+soil types, yields etc.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>site_details</span><span class='op'>(</span>site_list <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>path</span><span class='op'>)</span></pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="collect_gee_data.html">collect_gee_data()</a></code> </p>
-        </td>
-        <td><p>Collect point based satellite</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="collect_tamsat_arc_data.html">collect_tamsat_arc_data()</a></code> </p>
-        </td>
-        <td><p>Collect point based satellite</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="generate_image_list.html">generate_image_list()</a></code> </p>
-        </td>
-        <td><p>List all valid images</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ml_labels.html">ml_labels()</a></code> </p>
-        </td>
-        <td><p>Return ML labels</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pbi_map_gadm.html">pbi_map_gadm()</a></code> </p>
-        </td>
-        <td><p>Maps locations to town centroids</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pbi_map_grid.html">pbi_map_grid()</a></code> </p>
-        </td>
-        <td><p>Maps coordinates to grid centroids</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="process_crop_cuts.html">process_crop_cuts()</a></code> </p>
-        </td>
-        <td><p>Format crop cut XLSX data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="site_details.html">site_details()</a></code> </p>
-        </td>
-        <td><p>Collect site details</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>site_list</th>
+      <td></td>
+    </tr>
+    <tr>
+      <th>path</th>
+      <td></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    
+
+
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
