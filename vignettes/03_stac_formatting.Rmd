@@ -13,6 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Labels provided for the STAC machine learning catalogs are sourced from two 'locations'. First, there are the raw labels as assigned by agronomists to two seasons of images acquired during the EotG project. Second, there are the labels generated using machine learning algorithms based upon the first set for the remainder of the data provided. 
 
+Data screening of initial labels (and hence model results) shows some very small images which are generally ignored and not included in the final dataset. After screening we retained ~17K images.
+
 Labels are provided for instances of:
 
 - Growth stages
@@ -28,12 +30,13 @@ Labels are provided for instances of:
 
 - extent of damage
   - a percentage
-  
-Data screening of initial labels (and hence model results) shows some very small images which are generally ignored and not included in the final dataset. After screening we retained XYZ of the XYZ collected images. Only Maize images were processed and modelled due to data limitations on other crop types (i.e. Green Gram, Soybeans and Sorghum).
 
-Both the model and labels are provided separately in:
-https://gitlab.com/ACRE_Africa/pbi-image-processing/-/tree/Akanodia-main-patch-30123
+Ancillary data are provided as zipped json files. Ancillary data is not image specific and covers the whole season associated with an image.
 
 ## STAC structure
 
-Maize images and labelled data (as well as meta-data and climate drivers) are provided as a STAC catalogue and collections.
+A visual preview of the github hosted STAC catolog can be found here:
+
+https://radiantearth.github.io/stac-browser/#/external/raw.githubusercontent.com/khufkens/EotG_data/main/release_v1/catalog.json
+
+These data are cleared for use, however we forsee further integration in the Radiant Earth Machine Learning hub (MLhub), data will migrate there once full compliance is assured with the Radiant Earth in house STAC specifications.

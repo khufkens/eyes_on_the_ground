@@ -11,7 +11,7 @@
 #' @param dest where to store the final results (by default results) are
 #'  also returned to the workspace
 #'
-#' @return a
+#' @return point based tamsat or arc data
 #' @export
 
 collect_tamsat_arc_data <- function(
@@ -70,4 +70,3 @@ collect_tamsat_arc_data <- function(
   
   return(data)
 }
-

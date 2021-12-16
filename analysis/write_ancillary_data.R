@@ -55,7 +55,7 @@ sites %>%
     jsonlite::write_json(
       .,
       path = file.path(
-        "/scratch/LACUNA/data_product/ancillary_data/site_info/",
+        "/scratch/LACUNA/staging_data/ancillary_data/site_info",
         filename_site_info),
       pretty = FALSE
     )

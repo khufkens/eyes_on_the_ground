@@ -18,7 +18,6 @@ base_path = "https://raw.githubusercontent.com/khufkens/EotG_data/main/release_v
 
 # use pandas data frames
 df = pd.read_csv("/scratch/LACUNA/staging_data/image_list.csv")
-df = df[0:200]
 
 # 2. extract and set some of the overall catalog details, this includes
 # a title and an elaborate description, as well as temporal and 
@@ -207,15 +206,14 @@ for key, subset in grouped_obj:
         image_link = base_path + "images/" + row.filename
         thumb_link = base_path + "thumbs/" + row.filename
         label_link = base_path + "labels/" + os.path.splitext(row.filename)[0] + ".json"
-        metadata_link = base_path + "ancillary_data/site_info/" + row.farmer_unique_id + "_" + str(row.site_id) + "_site_info.json"
-        era5_link = base_path + "ancillary_data/era5/" + row.farmer_unique_id + "_" + str(row.site_id) + "_ERA5.json"
-        sentinel_link = base_path + "/ancillary_data/sentinel/" + row.farmer_unique_id + "_" + str(row.site_id) + "_S2_R.json"
-        tamsat_link = base_path + "/ancillary_data/sentinel/" + row.farmer_unique_id + "_" + str(row.site_id) + "_TAMSAT.json"
-        arc_link = base_path + "/ancillary_data/sentinel/" + row.farmer_unique_id + "_" + str(row.site_id) + "_ARC.json"
+        era5_link = base_path + "ancillary_data/era5/" + row.farmer_unique_id + "_" + str(row.site_id) + "_ERA5.zip"
+        sentinel_link = base_path + "/ancillary_data/sentinel/" + row.farmer_unique_id + "_" + str(row.site_id) + "_S2_R.zip"
+        tamsat_link = base_path + "/ancillary_data/sentinel/" + row.farmer_unique_id + "_" + str(row.site_id) + "_TAMSAT.zip"
+        arc_link = base_path + "/ancillary_data/sentinel/" + row.farmer_unique_id + "_" + str(row.site_id) + "_ARC.zip"
 
         # read in site meta data which will be provided in
         # the properties tag
-        f = open("/scratch/LACUNA/data_product/" + "ancillary_data/site_info/" +
+        f = open("/scratch/LACUNA/staging_data/" + "ancillary_data/site_info/" +
              row.farmer_unique_id + "_" + str(row.site_id) + "_site_info.json")
         metadata = json.load(f)[0]
         f.close()
@@ -275,7 +273,7 @@ for key, subset in grouped_obj:
                 asset = pystac.Asset(
                     href = sentinel_link,
                     title= "Sentinel remote sensing data",
-                    media_type = "application/json",
+                    media_type = "application/zip",
                     roles = ([
                     "data"
                     ])
@@ -288,7 +286,7 @@ for key, subset in grouped_obj:
                 asset = pystac.Asset(
                     href = era5_link,
                     title= "ERA5 climate data",
-                    media_type = "application/json",
+                    media_type = "application/zip",
                     roles = ([
                     "data"
                     ])
@@ -301,7 +299,7 @@ for key, subset in grouped_obj:
                 asset = pystac.Asset(
                     href = arc_link,
                     title= "ARC precipitation estimates",
-                    media_type = "application/json",
+                    media_type = "application/zip",
                     roles = ([
                     "data"
                     ])
@@ -314,7 +312,7 @@ for key, subset in grouped_obj:
                 asset = pystac.Asset(
                     href = tamsat_link,
                     title= "TAMSAT precipitation estimates",
-                    media_type = "application/json",
+                    media_type = "application/zip",
                     roles = ([
                     "data"
                     ])
