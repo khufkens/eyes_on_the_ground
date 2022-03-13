@@ -208,8 +208,12 @@ for key, subset in grouped_obj:
         label_link = base_path + "labels/" + os.path.splitext(row.filename)[0] + ".json"
         era5_link = base_path + "ancillary_data/era5/" + row.farmer_unique_id + "_" + str(row.site_id) + "_ERA5.zip"
         sentinel_link = base_path + "/ancillary_data/sentinel/" + row.farmer_unique_id + "_" + str(row.site_id) + "_S2_R.zip"
-        tamsat_link = base_path + "/ancillary_data/sentinel/" + row.farmer_unique_id + "_" + str(row.site_id) + "_TAMSAT.zip"
-        arc_link = base_path + "/ancillary_data/sentinel/" + row.farmer_unique_id + "_" + str(row.site_id) + "_ARC.zip"
+        tamsat_link = base_path + "/ancillary_data/tamsat/" + row.farmer_unique_id + "_" + str(row.site_id) + "_TAMSAT.zip"
+        arc_link = base_path + "/ancillary_data/arc/" + row.farmer_unique_id + "_" + str(row.site_id) + "_ARC.zip"
+        
+        # validate links, skip if missing
+        # but report to console for further checks
+        
 
         # read in site meta data which will be provided in
         # the properties tag
