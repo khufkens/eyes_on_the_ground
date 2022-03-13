@@ -31,9 +31,18 @@ collect_gee_data <- function(
   output <- df %>%
     rowwise() %>%
     do({
+
+      filename_gee <- file.path(
+        dest,
+        .$farmer_unique_id,
+        .$site_id,
+        paste0(.$farmer_unique_id,"_",.$site_id, ".csv")
+      )
       
+      if(!file.exists(filename_gee)){
+      # don't overload queries
       Sys.sleep(3)
-      
+        
       # make the gee_subset.py python call
       # time the duration of the call for reporting
       system(
@@ -55,7 +64,7 @@ collect_gee_data <- function(
         file.path(tempdir(), "lacuna_gee_subset.csv"),
           sep = ",", header = TRUE, stringsAsFactors = FALSE)
       
-      # reformat date fieldm
+      # reformat date field
       # time is not required
       df <- df %>%
         mutate(
@@ -72,13 +81,6 @@ collect_gee_data <- function(
           showWarnings = FALSE
         )
       
-      filename_gee <- file.path(
-        dest,
-        .$farmer_unique_id,
-        .$site_id,
-        paste0(.$farmer_unique_id,"_",.$site_id, ".csv")
-      )
-      
       write.table(
         df,
         filename_gee,
@@ -87,8 +89,23 @@ collect_gee_data <- function(
         sep = ","
       )
       
+      # purge file
+      try(file.remove(file.path(tempdir(), "lacuna_gee_subset.csv")))
+      
       df$farmer_unique_id <- .$farmer_unique_id
       df$site_id <- .$site_id
+      
+      } else {
+      
+        df <- read.table(
+          filename_gee,
+          header = TRUE,
+          sep = ","
+        )
+        
+        df$farmer_unique_id <- .$farmer_unique_id
+        df$site_id <- .$site_id
+      }
       
       # data frame as output
       df

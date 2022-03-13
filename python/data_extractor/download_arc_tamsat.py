@@ -38,6 +38,11 @@ def getArgs():
                        '--year',
                        help = 'a year for which to download ARC data') 
 
+   parser.add_argument('-m',
+                       '--month',
+                       default = '',
+                       help = 'a month of year for which to download ARC data') 
+
    parser.add_argument('-p',
                        '--product',
                        default= 'ARC',
@@ -60,6 +65,7 @@ if __name__ == '__main__':
 
     # convert to string
     year = str(args.year)
+    month = str(args.month)
 
     if int(args.year) < 1983:
      sys.exit("Data runs from 1983 onward only!")
@@ -84,7 +90,7 @@ if __name__ == '__main__':
       # convert to pandas data frame and filter out
       # the desired year
       files = pd.DataFrame(files, columns = ['filename'])
-      locs = files.filename.str.contains('^africa_arc\\.' + year)
+      locs = files.filename.str.contains('^africa_arc\\.' + year + month)
       files = files.loc[locs]
 
       # loop over all dates and download the files
@@ -112,13 +118,14 @@ if __name__ == '__main__':
       
       # list all dates
       dates = pd.date_range(start='1/1/' + year, end='12/31/' + year)
-      df = pd.DataFrame(dates)
-      df = df.rename(columns = {0:'date'})
-
+      df = pd.DataFrame(dates, columns = ['date'])
+      locs = df.date.dt.strftime('%Y-%m-%d').str.contains(year + "-" + month)
+      df = df.loc[locs].reindex()
+     
       # date conversions
-      df['year'] = dates.strftime('%Y')
-      df['month'] = dates.strftime('%m')
-      df['date'] = dates.strftime('%Y_%m_%d')
+      df['year'] = df.date.dt.strftime('%Y')
+      df['month'] = df.date.dt.strftime('%m')
+      df['date'] = df.date.dt.strftime('%Y_%m_%d')
 
       for index, file in df.iterrows():
 

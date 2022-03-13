@@ -186,7 +186,7 @@ site_details <- function(
   
   if(site_list && !missing(path)){
     # write to file
-    write.table(
+    saveRDS(
       site_details %>%
         select(-lon, -lat) %>%
         rename(
@@ -197,11 +197,7 @@ site_details <- function(
           start_date = "2020-01-01",
           end_date = "2021-12-31"
         ),
-      file.path(path,"site_list.csv"),
-      quote = FALSE,
-      row.names = FALSE,
-      col.names = TRUE,
-      sep = ","
+      file.path(path,"site_list.rds")
     )  
   }
   
@@ -209,7 +205,10 @@ site_details <- function(
     # write to file
     write.table(
       site_details %>%
-        select(-lon_orig, -lat_orig, -approve_comment),
+        select(
+          -lon_orig,
+          -lat_orig,
+          -approve_comment),
       file.path(path, "/site_specifications.csv"),
       quote = FALSE,
       row.names = FALSE,

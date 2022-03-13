@@ -8,16 +8,13 @@
 #'
 #' @param df a data frame with coordinates
 #' @param source a source where to download and or source data from
-#' @param dest where to store the final results (by default results) are
-#'  also returned to the workspace
 #'
 #' @return point based tamsat or arc data
 #' @export
 
 collect_tamsat_arc_data <- function(
   df,
-  source = "/scratch/LACUNA/remote_sensing/TAMSAT/",
-  dest = "/scratch/LACUNA/data_product/remote_sensing_data/"
+  source = "/scratch/LACUNA/remote_sensing/TAMSAT/"
 ) {
   
   location <- df %>%

@@ -8,12 +8,15 @@
 library(tidyverse)
 source("R/site_details.R")
 
+# save site list, with exact coordinates
+site_details(path = "/scratch/LACUNA", site_list = TRUE)
+
 # get sites to process
 sites <- site_details()
 sites <- sites %>%
-  filter(
-    season != "LR2021"
-  ) %>%
+  # filter(
+  #   season != "LR2021"
+  # ) %>%
   select(
     farmer_unique_id,
     site_id,
@@ -38,6 +41,10 @@ sites <- sites %>%
     site_name = paste(farmer_unique_id, site_id)
   )
 
+# this routine returns errors because the
+# do() call expects a dataframe output
+# not data written to file, this can be
+# safely ignored
 sites %>%
   select(
     -site_name
@@ -52,19 +59,21 @@ sites %>%
       sep = "_"
     )
     
-    jsonlite::write_json(
-      .,
-      path = file.path(
-        "/scratch/LACUNA/staging_data/ancillary_data/site_info",
-        filename_site_info),
-      pretty = FALSE
-    )
+    filename_site_info <- file.path(
+      "/scratch/LACUNA/staging_data/ancillary_data/site_info",
+      filename_site_info)
     
+    if(!file.exists(filename_site_info)){
+      jsonlite::write_json(
+        .,
+        path = filename_site_info,
+        pretty = FALSE
+      )  
+    }
   })
 
-
 # merge all remote sensing data into one data frame
-# and limit data to june 2021
+# and limit data to December 2021
 df <- readRDS("/scratch/LACUNA/remote_sensing/gee_data.rds")
 tamsat <- readRDS("/scratch/LACUNA/remote_sensing/tamsat_data.rds")
 arc <- readRDS("/scratch/LACUNA/remote_sensing/arc_data.rds")
