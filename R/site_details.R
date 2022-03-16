@@ -201,22 +201,6 @@ site_details <- function(
     )  
   }
   
-  if(!missing(path) && !site_list){
-    # write to file
-    write.table(
-      site_details %>%
-        select(
-          -lon_orig,
-          -lat_orig,
-          -approve_comment),
-      file.path(path, "/site_specifications.csv"),
-      quote = FALSE,
-      row.names = FALSE,
-      col.names = TRUE,
-      sep = ","
-    )
-  }
-  
   return(site_details)
 }
 

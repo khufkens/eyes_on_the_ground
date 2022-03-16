@@ -7,7 +7,6 @@
 #' meteo data, etc. Only repos on GEE are evaluated
 #'
 #' @param df a data frame with coordinates
-#' @param source a source where to download and or source data from
 #' @param dest where to store the final results (by default results) are
 #'  also returned to the workspace
 #'
@@ -16,8 +15,7 @@
 
 collect_gee_data <- function(
   df,
-  source = "/scratch/LACUNA/remote_sensing/",
-  dest = "/scratch/LACUNA/data_product/remote_sensing_data/"
+  dest = "/scratch/LACUNA/remote_sensing/GEE/"
 ) {
   
   # Download ancillary remote sensing data from
@@ -97,14 +95,17 @@ collect_gee_data <- function(
       
       } else {
       
+        df <- data.frame(NULL)
+        
         df <- read.table(
           filename_gee,
           header = TRUE,
           sep = ","
         )
-        
+
         df$farmer_unique_id <- .$farmer_unique_id
         df$site_id <- .$site_id
+        df$date <- as.Date(df$date)
       }
       
       # data frame as output

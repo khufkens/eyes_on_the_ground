@@ -47,7 +47,7 @@ ml_labels <- function(
       disturbance_none = good,
       disturbance_weeds = weed,
       disturbance_drought = drought_conditions,
-      disturbance_nutrient_deficit = nutrient_deficiency
+      disturbance_nutrient_deficit = nutrient_deficient
     )
   
 }

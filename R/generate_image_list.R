@@ -5,14 +5,14 @@
 #' manually screened by surveyors
 #'
 #' @param path where to store the full list as csv file
-#' @param season_filter what season to filter out (LR2021 by default)
+#' @param out_path where to store the image list
 #'
 #' @return
 #' @export
 
 generate_image_list <- function(
   path = "/backup/see_it_grow",
-  season_filter = "LR2021",
+  path_out = "/scratch/LACUNA/staging_data/",
   ml_labels = TRUE
 ) {
   
@@ -135,6 +135,7 @@ generate_image_list <- function(
   images <- bind_rows(images_sr, images_lr)
   images <- bind_rows(images, images_lr21)
   images <- bind_rows(images, site_info)
+  print(head(images))
   
   # get date range
   images <- images %>%
@@ -144,10 +145,16 @@ generate_image_list <- function(
       last_image = max(date)
     )
   
+  print(nrow(images))
+  
   # add manual screening labels
   manual_sr <- read_csv("data/ml_labels/manual/ACRE_SR_final_csv.csv")
   manual_lr <- read_csv("data/ml_labels/manual/ACRE_LR_final_csv.csv")
-  manual <- bind_rows(manual_sr, manual_lr) %>%
+  manual_lr21 <- read_csv("data/ml_labels/manual/ACRE_LR21_final_csv.csv")
+  
+  manual <- bind_rows(manual_sr, manual_lr)
+  manual <- bind_rows(manual, manual_lr21)
+  manual <- manual %>%
     rename_all(~ tolower(.)) %>%
     rename(
       growth_stage = stage
@@ -166,20 +173,17 @@ generate_image_list <- function(
   images <- left_join(images, manual)
   
   # merge machine learning labels
-  if(ml_labels == TRUE){
+  if(ml_labels){
     labels <- ml_labels()
     images <- left_join(images, labels, by = "filename")
   }
   
-  # subset only 2020 seasons
-  images <- images %>%
-    filter(season != season_filter)
-  
-  if(!missing(path)){
+  print("writing to file")
+  if(!missing(path_out)){
     # output data
     write.table(
       images,
-      file.path(path, "image_list.csv"),
+      file.path(path_out, "image_list.csv"),
       col.names = TRUE,
       quote = FALSE,
       row.names = FALSE

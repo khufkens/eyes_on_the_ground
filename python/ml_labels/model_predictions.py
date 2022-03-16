@@ -11,7 +11,7 @@ from pandas.core.frame import DataFrame
 import tensorflow as tf
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1" # process on compute unit (not display nvidia card)
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 #%%
 def get_predictions(Images, analysis_type_input):
@@ -59,15 +59,16 @@ def get_predictions(Images, analysis_type_input):
         # basenames
         names_input = []
         for file in files:
-            names_input.append(os.path.basename(file))
-
+            x = os.path.basename(file)
+            names_input.append(x)
+        
         image_input = np.array(image_input)/255.
-        names_input = np.array(file)
+        names_input = np.array(names_input)
 
         # make predictions
         y_pred = model.predict(image_input)
         pred_df = pd.DataFrame(y_pred)
-
+        
         # load model
         if analysis_type_input == 1:
             pred_df = pred_df.rename(columns={
@@ -76,7 +77,9 @@ def get_predictions(Images, analysis_type_input):
                 2:'flowering',
                 3:'maturity',
             })
+            
             pred_df['name']= names_input
+            
             pred_df = pred_df[['name', 'sowing', 'vegetative', 'flowering', 'maturity']]
         elif analysis_type_input == 2:
             pred_df = pred_df.rename(columns={
@@ -96,15 +99,14 @@ def get_predictions(Images, analysis_type_input):
             pred_df = pred_df.rename(columns={
                 0:'good',
                 1:'weed', 
-                2:'drought',
+                2:'drought_conditions',
                 3:'nutrient_deficient',
             })
             pred_df['name']= names_input
-            pred_df = pred_df[['name', 'good', 'weed', 'drought', 'nutrient_deficient']]
+            pred_df = pred_df[['name', 'good', 'weed', 'drought_conditions', 'nutrient_deficient']]
         else:
             print('Incorrect type')
             return (False)
-
         pred_out = pred_out.append(pred_df)
 
     # return classifcation results
@@ -138,7 +140,7 @@ def Resize_data(images_input):
 
 #%%
 # list all jpg files
-path = "/backup/see_it_grow_backup/"
+path = "/scratch/LACUNA/staging_data/images/"
 JPG_path = os.path.join(path, "**/*.JPG")
 jpg_path = os.path.join(path, "**/*.jpg")
 images_JPG = glob.glob(JPG_path, recursive = True)
@@ -146,7 +148,6 @@ images_jpg = glob.glob(jpg_path, recursive = True)
 
 # combine two jpg formats
 images = images_JPG + images_jpg
-print(len(images))
 
 #%%
 print('--------- All entered images ready for predictions ----------')
@@ -159,10 +160,10 @@ pred = get_predictions(images, int(analysis_type))
 #%%
 if int(analysis_type) == 1:
     print("writing data to file!")
-    pred.to_csv('output/GS_Predictions.csv')
+    pred.to_csv('ml/GS_Predictions.csv')
 elif int(analysis_type) == 2:
-    pred.to_csv('output/DR_Damage_Predictions.csv')
+    pred.to_csv('ml/DR_Damage_Predictions.csv')
 elif int(analysis_type) == 3:
-    pred.to_csv('output/DR_Extent_Predictions.csv')
+    pred.to_csv('ml/DR_Extent_Predictions.csv')
 elif int(analysis_type) == 4:
-    pred.to_csv('output/Multiclass_damage_Predictions.csv')
+    pred.to_csv('ml/Multiclass_damage_Predictions.csv')

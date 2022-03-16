@@ -8,15 +8,9 @@
 library(tidyverse)
 source("R/site_details.R")
 
-# save site list, with exact coordinates
-site_details(path = "/scratch/LACUNA", site_list = TRUE)
-
 # get sites to process
 sites <- site_details()
 sites <- sites %>%
-  # filter(
-  #   season != "LR2021"
-  # ) %>%
   select(
     farmer_unique_id,
     site_id,
@@ -51,24 +45,24 @@ sites %>%
   ) %>%
   group_by(farmer_unique_id, site_id) %>%
   do({
-    
+
     filename_site_info <- paste(
       .$farmer_unique_id[1],
       .$site_id[1],
       "site_info.json",
       sep = "_"
     )
-    
+
     filename_site_info <- file.path(
-      "/scratch/LACUNA/staging_data/ancillary_data/site_info",
+      "/scratch/LACUNA/data_product/ancillary_data/site_info",
       filename_site_info)
-    
+
     if(!file.exists(filename_site_info)){
       jsonlite::write_json(
         .,
         path = filename_site_info,
         pretty = FALSE
-      )  
+      )
     }
   })
 
@@ -82,11 +76,6 @@ df <- bind_rows(df, tamsat)
 df <- bind_rows(df, arc)
 rm(list = c("arc","tamsat"))
 gc()
-
-df <- df %>%
-  filter(
-    date < as.Date("2021-06-01")
-  )
 
 df %>%
   group_by(farmer_unique_id, site_id, product) %>%

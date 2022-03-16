@@ -31,7 +31,7 @@ site_info <- site_info %>%
 # image list for stac formatting
 write.table(
   site_info,
-  "/scratch/LACUNA/staging_data/site_info.csv",
+  "/scratch/LACUNA/data_product/site_info.csv",
   row.names = FALSE,
   quote = FALSE,
   col.names = TRUE,
@@ -79,7 +79,7 @@ images <- images %>%
 # image list for stac formatting
 write.table(
   images,
-  "/scratch/LACUNA/staging_data/image_list.csv",
+  "/scratch/LACUNA/data_product/image_list.csv",
   row.names = FALSE,
   quote = FALSE,
   col.names = TRUE,

@@ -17,7 +17,7 @@ base_path = "https://raw.githubusercontent.com/khufkens/EotG_data/main/release_v
 # populate the stac items (generated in R - should move to python)
 
 # use pandas data frames
-df = pd.read_csv("/scratch/LACUNA/staging_data/image_list.csv")
+df = pd.read_csv("/scratch/LACUNA/data_product/image_list.csv")
 
 # 2. extract and set some of the overall catalog details, this includes
 # a title and an elaborate description, as well as temporal and 
@@ -217,7 +217,7 @@ for key, subset in grouped_obj:
 
         # read in site meta data which will be provided in
         # the properties tag
-        f = open("/scratch/LACUNA/staging_data/" + "ancillary_data/site_info/" +
+        f = open("/scratch/LACUNA/data_product/" + "ancillary_data/site_info/" +
              row.farmer_unique_id + "_" + str(row.site_id) + "_site_info.json")
         metadata = json.load(f)[0]
         f.close()
