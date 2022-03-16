@@ -78,6 +78,11 @@ catalog = pystac.Catalog(
                         "url": "http://ifpri.org"
                         },
                         {
+                        "name": "CGIAR research program on Policies, Institutions and Markets (PIM)",
+                        "roles": ["producer"],
+                        "url": "https://pim.cgiar.org/"
+                        },
+                        {
                         "name": "BlueGreen Labs (bv)",
                         "roles": ["processor"],
                         "url": "http://bluegreenlabs.org"
@@ -110,7 +115,7 @@ image_catalog = pystac.Catalog(
                         "roles": ["producer","processor"],
                         "url": "http://ifpri.org"
                         },
-                                                {
+                        {
                         "name": "CGIAR research program on Policies, Institutions and Markets (PIM)",
                         "roles": ["producer"],
                         "url": "https://pim.cgiar.org/"
