@@ -10,7 +10,7 @@ import argparse
 import json
 import geojson
 
-base_path = "https://raw.githubusercontent.com/khufkens/EotG_data/main/release_v1/"
+base_path = "https://raw.githubusercontent.com/khufkens/EotG_data_final/main/"
 
 # 1. read in the generated overview files
 # which includes all required fields to
@@ -33,6 +33,8 @@ fields based upon previous work within the Picture Based Insurance framework
 (Ceballos, Kramer and Robles, 2019, [https://doi.org/10.1016/j.deveng.2019.100042](https://doi.org/10.1016/j.deveng.2019.100042)).
 This is a unique dataset of georeferenced crop images along with labels on input use,
 crop management, phenology, crop damage, and yields, collected across 8 counties in Kenya.
+The research leading to this dataset was undertaken as part of the CGIAR research program on Policies,
+Institutions and Markets (PIM).
 '''
 
 df.date = pd.to_datetime(df.date)
@@ -107,6 +109,11 @@ image_catalog = pystac.Catalog(
                         "name": "International Food Policy Research Institute",
                         "roles": ["producer","processor"],
                         "url": "http://ifpri.org"
+                        },
+                                                {
+                        "name": "CGIAR research program on Policies, Institutions and Markets (PIM)",
+                        "roles": ["producer"],
+                        "url": "https://pim.cgiar.org/"
                         },
                         {
                         "name": "BlueGreen Labs (bv)",
@@ -337,7 +344,7 @@ for key, subset in grouped_obj:
 catalog.add_child(image_catalog)
 #catalog.set_self_href("https://raw.githubusercontent.com/khufkens/eyes_on_the_ground/main/")
 #catalog.make_all_asset_hrefs_relative()
-catalog.normalize_hrefs("https://raw.githubusercontent.com/khufkens/EotG_data/main/release_v1/")
+catalog.normalize_hrefs("https://raw.githubusercontent.com/khufkens/EotG_data/main")
 
 # describe and validate
 catalog.describe()
