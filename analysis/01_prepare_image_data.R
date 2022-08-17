@@ -76,6 +76,9 @@ images <- images %>%
     !is.na(file_path)
   )
 
+# set labels to NA for crops other than Maize
+images[which(images$crop_name != "maize"),11:20] <- NA
+
 # image list for stac formatting
 write.table(
   images,
@@ -111,7 +114,7 @@ images %>%
         -xmin, -xmax, -ymin, -ymax,
         -file_path
       )
-    
+
     # write json label file
     jsonlite::write_json(
       x,

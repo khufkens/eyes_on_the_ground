@@ -349,7 +349,7 @@ for key, subset in grouped_obj:
 catalog.add_child(image_catalog)
 #catalog.set_self_href("https://raw.githubusercontent.com/khufkens/eyes_on_the_ground/main/")
 #catalog.make_all_asset_hrefs_relative()
-catalog.normalize_hrefs("https://raw.githubusercontent.com/khufkens/EotG_data/main")
+catalog.normalize_hrefs("https://raw.githubusercontent.com/khufkens/EotG_data_final/main")
 
 # describe and validate
 catalog.describe()

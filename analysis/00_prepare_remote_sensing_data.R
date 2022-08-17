@@ -8,8 +8,7 @@ source("R/collect_tamsat_arc_data.R")
 source("R/site_details.R")
 
 # get sites to process
-site_details(site_list = TRUE, path = tempdir())
-sites <- readRDS(file.path(tempdir(), "site_list.rds"))
+sites <- site_details()
 
 # grab TAMSAT data
 tamsat <- collect_tamsat_arc_data(

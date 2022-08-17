@@ -64,17 +64,21 @@ sites %>%
         pretty = FALSE
       )
     }
+    
+    data.frame(NULL)
   })
 
 # merge all remote sensing data into one data frame
 # and limit data to December 2021
-df <- readRDS("/scratch/LACUNA/remote_sensing/gee_data.rds")
+df <- readRDS("data/gee_data.rds")
 tamsat <- readRDS("/scratch/LACUNA/remote_sensing/tamsat_data.rds")
 arc <- readRDS("/scratch/LACUNA/remote_sensing/arc_data.rds")
+era <- readRDS("data/era5/era5_data.rds")
 
 df <- bind_rows(df, tamsat)
 df <- bind_rows(df, arc)
-rm(list = c("arc","tamsat"))
+df <- bind_rows(df, era)
+rm(list = c("arc","tamsat","era"))
 gc()
 
 df %>%
