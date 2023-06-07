@@ -3,13 +3,13 @@
 #' Custom function to transform the XLS data
 #' into a tidy data frame for further processing
 #'
-#' @param xls xlsx file with the crop cut data
+#' @param path crop cut path
 #'
 #' @return
 #' @export
 
 process_crop_cuts <- function(
-  xls = "/backup/see_it_grow/LR2021/Reports/LR2021 CCE data sheet - PBI & IUK.xlsx"
+  path
   ){
   
   # libraries (hackish)
@@ -19,7 +19,7 @@ process_crop_cuts <- function(
   # read in all sheets
   df <- lapply(1:10, function(sheet){
     sh <- readxl::read_xlsx(
-      xls,
+      file.path(path, "LR2021/Reports/LR2021 CCE data sheet - PBI & IUK.xlsx"),
       sheet = sheet
     )
     colnames(sh) <- tolower(names(sh))

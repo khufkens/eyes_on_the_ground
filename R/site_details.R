@@ -13,7 +13,8 @@
 
 site_details <- function(
   site_list = FALSE,
-  path
+  path,
+  out_path
 ){
   # load libraries + scripts
   require(tidyverse)
@@ -23,7 +24,7 @@ site_details <- function(
   source("R/process_crop_cuts.R")
   
   # get crop cut data
-  df <- process_crop_cuts()
+  df <- process_crop_cuts(path = path)
   df <- df %>%
     mutate(
       site_id = as.numeric(site_id)
@@ -35,9 +36,9 @@ site_details <- function(
   # Read in site details from excel sheets
   # these paths are hardcoded due to the irregular nature of the file
   # names. Will not change for provenance tracking reasons
-  site_details_sr <- readxl::read_xlsx("/backup/see_it_grow/SR2020/Reports/SR2020_SiteDetails_3-5-2021.xlsx")
-  site_details_lr <- readxl::read_xlsx("/backup/see_it_grow/LR2020/Reports/LR2020_SiteDetails_2021-05-03T04_47_08.770Z.xlsx")
-  site_details_lr21 <- readxl::read_xlsx("/backup/see_it_grow/LR2021/Reports/SeeItGrow_LR2021.xlsx", sheet = "SiteDetails")
+  site_details_sr <- readxl::read_xlsx(file.path(path, "SR2020/Reports/SR2020_SiteDetails_3-5-2021.xlsx"))
+  site_details_lr <- readxl::read_xlsx(file.path(path, "LR2020/Reports/LR2020_SiteDetails_2021-05-03T04_47_08.770Z.xlsx"))
+  site_details_lr21 <- readxl::read_xlsx(file.path(path,"LR2021/Reports/SeeItGrow_LR2021.xlsx"), sheet = "SiteDetails")
   
   # convert column names
   
@@ -184,7 +185,7 @@ site_details <- function(
   # and a date range to use for extraction of
   # remote sensing data
   
-  if(site_list && !missing(path)){
+  if(site_list && !missing(out_path)){
     # write to file
     saveRDS(
       site_details %>%
@@ -197,7 +198,7 @@ site_details <- function(
           start_date = "2020-01-01",
           end_date = "2021-12-31"
         ),
-      file.path(path,"site_list.rds")
+      file.path(out_path,"site_list.rds")
     )  
   }
   
