@@ -22,6 +22,16 @@ image_list <- image_list |>
     -date,
     -farmer_id,
     -site_id
+  ) 
+
+image_list <- image_list |>
+  ungroup() |>
+  select(
+    filename,
+    growth_stage,
+    damage,
+    extent,
+    season
   )
 
 # read SR2021 data
@@ -46,3 +56,75 @@ image_list <- bind_rows(
   image_list,
   sr2021
 )
+
+# create training data
+train <- image_list |>
+  group_by(damage, extent) |>
+  sample_frac(0.75) |>
+  ungroup()
+
+# create testing hold-out
+test_reference <- anti_join(
+  image_list,
+  train,
+  by = "filename"
+  ) 
+
+test_candidates <- test_reference |>
+  select(
+    -growth_stage,
+    -damage,
+    -extent
+  )
+
+write.table(
+  train,
+  file = "data/train.csv",
+  sep = ",",
+  quote = FALSE,
+  row.names = FALSE,
+  col.names = TRUE
+)
+
+write.table(
+  test_candidates,
+  file = "data/test_candidates.csv",
+  sep = ",",
+  quote = FALSE,
+  row.names = FALSE,
+  col.names = TRUE
+)
+
+write.table(
+  test_reference,
+  file = "data/test_reference.csv",
+  sep = ",",
+  quote = FALSE,
+  row.names = FALSE,
+  col.names = TRUE
+)
+
+
+
+# summaries by season
+# for the training data
+train |>
+  group_by(season) |>
+  summarize(
+    n()
+  ) |> 
+  print()
+
+train |>
+  group_by(damage) |>
+  summarize(
+    n()
+  ) |> 
+  print()
+
+test |>
+  group_by(damage,extent) |>
+  summarize(
+    n()
+  )
+
