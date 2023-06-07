@@ -103,7 +103,7 @@ df %>%
           path = file.path("/scratch/LACUNA/data_product/ancillary_data/era5", filename),
           pretty = FALSE
         )
-      } else if (grepl("S2_R",.$product[1])) {
+      } else if (grepl("S2_SR",.$product[1])) {
 
         filename <- paste(
           .$farmer_unique_id[1],
@@ -117,20 +117,20 @@ df %>%
           path = file.path("/scratch/LACUNA/data_product/ancillary_data/sentinel", filename),
           pretty = FALSE
         )
-      } else if (grepl("S1_GRD",.$product[1])) {
-
-        filename <- paste(
-          .$farmer_unique_id[1],
-          .$site_id[1],
-          "S2_R.json",
-          sep = "_"
-        )
-
-        jsonlite::write_json(
-          .,
-          path = file.path("/scratch/LACUNA/data_product/ancillary_data/sentinel", filename),
-          pretty = FALSE
-        )
+      # } else if (grepl("S1_GRD",.$product[1])) {
+      # 
+      #   filename <- paste(
+      #     .$farmer_unique_id[1],
+      #     .$site_id[1],
+      #     "S2_R.json",
+      #     sep = "_"
+      #   )
+      # 
+      #   jsonlite::write_json(
+      #     .,
+      #     path = file.path("/scratch/LACUNA/data_product/ancillary_data/sentinel", filename),
+      #     pretty = FALSE
+      #   )
       } else if (grepl("TAMSAT",.$product[1])) {
 
         filename <- paste(
