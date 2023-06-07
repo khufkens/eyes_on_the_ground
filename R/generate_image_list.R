@@ -23,7 +23,7 @@ generate_image_list <- function(
   
   # only retain site details
   # wrt the filename, unique id and site id
-  site_info <- site_details() %>%
+  site_info <- site_details(path = path) %>%
     select(
       farmer_unique_id,
       site_id,
